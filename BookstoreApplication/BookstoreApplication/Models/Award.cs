@@ -1,11 +1,11 @@
 ﻿namespace BookstoreApplication.Models
 {
-    public class Author
+    public class Award
     {
         public int Id { get; set; }
-        public required string FullName { get; set; }
-        public required string Biography { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public required string Name { get; set; }
+        public required string Description { get; set; }
+        public required int YearBegan { get; set; }
         public ICollection<AwardAuthor> AwardAuthors { get; set; } = new List<AwardAuthor>();
     }
 }
