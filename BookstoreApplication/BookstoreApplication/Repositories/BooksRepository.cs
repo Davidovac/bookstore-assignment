@@ -1,4 +1,5 @@
-﻿using BookstoreApplication.Data;
+﻿using System.Threading.Tasks;
+using BookstoreApplication.Data;
 using BookstoreApplication.DTOs;
 using BookstoreApplication.Models;
 using Humanizer;
@@ -14,14 +15,14 @@ namespace BookstoreApplication.Repositories
             _context = context;
         }
 
-        public Book GetBook(int id)
+        public async Task<Book?> GetBookAsync(int id)
         {
-            return _context.Books.Find(id);
+            return await _context.Books.FindAsync(id);
         }
 
-        public BookDto GetById(int id)
+        public async Task<BookDto?> GetByIdAsync(int id)
         {
-            return _context.Books
+            return await _context.Books
                 .Include(b => b.Author)
                 .Include(b => b.Publisher)
                 .Select(b => new BookDto
@@ -31,6 +32,7 @@ namespace BookstoreApplication.Repositories
                     PageCount = b.PageCount,
                     PublishedDate = b.PublishedDate,
                     ISBN = b.ISBN,
+                    AuthorId = b.AuthorId,
                     Author = new AuthorDto
                     {
                         Id = b.Author.Id,
@@ -38,6 +40,7 @@ namespace BookstoreApplication.Repositories
                         Biography = b.Author.Biography,
                         DateOfBirth = b.Author.DateOfBirth
                     },
+                    PublisherId = b.PublisherId,
                     Publisher = new PublisherDto
                     {
                         Id = b.Publisher.Id,
@@ -46,12 +49,12 @@ namespace BookstoreApplication.Repositories
                         Website = b.Publisher.Website
                     }
                 })
-                .FirstOrDefault(b => b.Id == id);
+                .FirstOrDefaultAsync(b => b.Id == id);
         }
 
-        public List<BookDto> GetAll()
+        public async Task<List<BookDto>?> GetAllAsync()
         {
-            return _context.Books
+            return await _context.Books
                 .Include(b => b.Author)
                 .Include(b => b.Publisher)
                 .Select(b => new BookDto
@@ -61,6 +64,7 @@ namespace BookstoreApplication.Repositories
                     PageCount = b.PageCount,
                     PublishedDate = b.PublishedDate,
                     ISBN = b.ISBN,
+                    AuthorId = b.AuthorId,
                     Author = new AuthorDto
                     {
                         Id = b.Author.Id,
@@ -68,6 +72,7 @@ namespace BookstoreApplication.Repositories
                         Biography = b.Author.Biography,
                         DateOfBirth = b.Author.DateOfBirth
                     },
+                    PublisherId = b.PublisherId,
                     Publisher = new PublisherDto
                     {
                         Id = b.Publisher.Id,
@@ -76,29 +81,29 @@ namespace BookstoreApplication.Repositories
                         Website = b.Publisher.Website
                     }
                 })
-                .ToList();
+                .ToListAsync();
         }
 
-        public Book Add(Book book)
+        public async Task<Book?> AddAsync(Book book)
         {
             _context.Books.Add(book);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return book;
         }
 
-        public Book Update(int id, Book book)
+        public async Task<Book> UpdateAsync(Book book)
         {
             _context.Books.Update(book);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return book;
         }
 
 
-        public void Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             Book? book = _context.Books.Find(id);
             _context.Books.Remove(book);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }

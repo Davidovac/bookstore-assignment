@@ -1,4 +1,5 @@
-﻿using BookstoreApplication.Data;
+﻿using System.Threading.Tasks;
+using BookstoreApplication.Data;
 using BookstoreApplication.DTOs;
 using BookstoreApplication.Models;
 using BookstoreApplication.Repositories;
@@ -23,11 +24,11 @@ namespace BookstoreApplication.Controllers
 
         // GET: api/publishers
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAllAsync()
         {
             try
             {
-                return Ok(_publishersRepo.GetAll());
+                return Ok(await _publishersRepo.GetAllAsync());
             }
             catch (Exception ex)
             {
@@ -37,9 +38,9 @@ namespace BookstoreApplication.Controllers
 
         // GET api/publishers/5
         [HttpGet("{id}")]
-        public IActionResult GetOne(int id)
+        public async Task<IActionResult> GetOneAsync(int id)
         {
-            var publisher = _publishersRepo.GetById(id);
+            var publisher = await _publishersRepo.GetByIdAsync(id);
             if (publisher == null)
             {
                 return NotFound();
@@ -49,7 +50,7 @@ namespace BookstoreApplication.Controllers
 
         // POST api/publishers
         [HttpPost]
-        public IActionResult Post(PublisherDto dto)
+        public async Task<IActionResult> PostAsync(PublisherDto dto)
         {
             try
             {
@@ -60,7 +61,7 @@ namespace BookstoreApplication.Controllers
                     Address = dto.Address,
                     Website = dto.Website
                 };
-                _publishersRepo.Add(publisher);
+                await _publishersRepo.AddAsync(publisher);
                 return Ok(dto);
             }
             catch (Exception ex)
@@ -71,7 +72,7 @@ namespace BookstoreApplication.Controllers
 
         // PUT api/publishers/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, PublisherDto dto)
+        public async Task<IActionResult> PutAsync(int id, PublisherDto dto)
         {
             try
             {
@@ -80,7 +81,7 @@ namespace BookstoreApplication.Controllers
                     return BadRequest();
                 }
 
-                var existingPublisher = _publishersRepo.GetById(id);
+                var existingPublisher = await _publishersRepo.GetByIdAsync(id);
                 if (existingPublisher == null)
                 {
                     return NotFound();
@@ -90,7 +91,7 @@ namespace BookstoreApplication.Controllers
                 existingPublisher.Address = dto.Address;
                 existingPublisher.Website = dto.Website;
 
-                _publishersRepo.Update(existingPublisher);
+                await _publishersRepo.UpdateAsync(existingPublisher);
                 return Ok(dto);
             }
             catch (Exception ex)
@@ -101,16 +102,16 @@ namespace BookstoreApplication.Controllers
 
         // DELETE api/publishers/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
             try
             {
-                var publisher = _publishersRepo.GetById(id);
+                var publisher = await _publishersRepo.GetByIdAsync(id);
                 if (publisher == null)
                 {
                     return NotFound();
                 }
-                _publishersRepo.Delete(publisher);
+                await _publishersRepo.DeleteAsync(publisher);
 
                 return NoContent();
             }

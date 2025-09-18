@@ -1,4 +1,5 @@
-﻿using BookstoreApplication.Data;
+﻿using System.Threading.Tasks;
+using BookstoreApplication.Data;
 using BookstoreApplication.DTOs;
 using BookstoreApplication.Models;
 using BookstoreApplication.Repositories;
@@ -26,11 +27,11 @@ namespace BookstoreApplication.Controllers
 
         // GET: api/books
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAllAsync()
         {
             try
             {
-                return Ok(_booksRepo.GetAll());
+                return Ok(await _booksRepo.GetAllAsync());
             }
             catch (Exception ex)
             {
@@ -41,9 +42,9 @@ namespace BookstoreApplication.Controllers
 
         // GET api/books/5
         [HttpGet("{id}")]
-        public IActionResult GetOne(int id)
+        public async Task<IActionResult> GetOneAsync(int id)
         {
-            var book = _booksRepo.GetById(id);
+            var book = await _booksRepo.GetByIdAsync(id);
             if (book == null)
             {
                 return NotFound();
@@ -53,19 +54,19 @@ namespace BookstoreApplication.Controllers
 
         // POST api/books
         [HttpPost]
-        public IActionResult Post(BookSimpleDto dto)
+        public async Task<IActionResult> PostAsync(BookSimpleDto dto)
         {
             try
             {
                 // kreiranje knjige je moguće ako je izabran postojeći autor
-                var author = _authorsRepo.GetById(dto.AuthorId);
+                var author = await _authorsRepo.GetByIdAsync(dto.AuthorId);
                 if (author == null)
                 {
                     return BadRequest();
                 }
 
                 // kreiranje knjige je moguće ako je izabran postojeći izdavač
-                var publisher = _publishersRepo.GetById(dto.PublisherId);
+                var publisher = await _publishersRepo.GetByIdAsync(dto.PublisherId);
                 if (publisher == null)
                 {
                     return BadRequest();
@@ -76,14 +77,14 @@ namespace BookstoreApplication.Controllers
                     Id = dto.Id,
                     Title = dto.Title,
                     PageCount = dto.PageCount,
-                    PublishedDate = dto.PublishedDate,
+                    PublishedDate = dto.PublishedDate.ToUniversalTime(),
                     ISBN = dto.ISBN,
                     AuthorId = dto.AuthorId,
                     Author = author,
                     PublisherId = dto.PublisherId,
                     Publisher = publisher
                 };
-                _booksRepo.Add(book);
+                await _booksRepo.AddAsync(book);
                 return Ok(dto);
             }
             catch (Exception ex)
@@ -95,7 +96,7 @@ namespace BookstoreApplication.Controllers
 
         // PUT api/books/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, BookSimpleDto dto)
+        public async Task<IActionResult> PutAsync(int id, BookSimpleDto dto)
         {
             try
             {
@@ -105,31 +106,31 @@ namespace BookstoreApplication.Controllers
                 }
 
                 // izmena knjige je moguća ako je izabran postojeći autor
-                var author = _authorsRepo.GetById(dto.AuthorId);
+                var author = await _authorsRepo.GetByIdAsync(dto.AuthorId);
                 if (author == null)
                 {
                     return BadRequest();
                 }
 
                 // izmena knjige je moguća ako je izabran postojeći izdavač
-                var publisher = _publishersRepo.GetById(dto.PublisherId);
+                var publisher = await _publishersRepo.GetByIdAsync(dto.PublisherId);
                 if (publisher == null)
                 {
                     return BadRequest();
                 }
 
-                var book = _booksRepo.GetBook(id);
+                var book = await _booksRepo.GetBookAsync(id);
 
                 if (book == null)
                     return NotFound();
 
                 book.Title = dto.Title;
                 book.PageCount = dto.PageCount;
-                book.PublishedDate = dto.PublishedDate;
+                book.PublishedDate = dto.PublishedDate.ToUniversalTime();
                 book.ISBN = dto.ISBN;
                 book.AuthorId = dto.AuthorId;
                 book.PublisherId = dto.PublisherId;
-                _booksRepo.Update(id, book);
+                await _booksRepo.UpdateAsync( book);
                 return Ok(dto);
             }
             catch (Exception ex)
@@ -140,16 +141,16 @@ namespace BookstoreApplication.Controllers
 
         // DELETE api/books/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
             try
             {
-                var book = _booksRepo.GetById(id);
+                var book = await _booksRepo.GetByIdAsync(id);
                 if (book == null)
                 {
                     return NotFound();
                 }
-                _booksRepo.Delete(id);
+                await _booksRepo.DeleteAsync(id);
                 return NoContent();
             }
             catch (Exception ex)

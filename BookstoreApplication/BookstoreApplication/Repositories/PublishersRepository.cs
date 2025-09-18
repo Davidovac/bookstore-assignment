@@ -1,4 +1,5 @@
 ﻿using System.Security.Policy;
+using System.Threading.Tasks;
 using BookstoreApplication.Data;
 using BookstoreApplication.Models;
 using Microsoft.EntityFrameworkCore;
@@ -15,35 +16,35 @@ namespace BookstoreApplication.Repositories
             _context = context;
         }
 
-        public Publisher? GetById(int id)
+        public async Task<Publisher?> GetByIdAsync(int id)
         {
-            return _context.Publishers.Find(id);
+            return await _context.Publishers.FindAsync(id);
         }
 
-        public List<Publisher> GetAll()
+        public async Task<List<Publisher>?> GetAllAsync()
         {
-            return _context.Publishers.ToList();
+            return await _context.Publishers.ToListAsync();
         }
 
-        public Publisher Add(Publisher publisher)
+        public async Task<Publisher> AddAsync(Publisher publisher)
         {
             _context.Publishers.Add(publisher);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return publisher;
         }
 
-        public Publisher Update(Publisher publisher)
+        public async Task<Publisher> UpdateAsync(Publisher publisher)
         {
             _context.Publishers.Update(publisher);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return publisher;
         }
 
 
-        public void Delete(Publisher publisher)
+        public async Task DeleteAsync(Publisher publisher)
         {
             _context.Publishers.Remove(publisher);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }

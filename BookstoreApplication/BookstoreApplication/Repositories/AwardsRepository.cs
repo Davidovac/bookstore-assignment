@@ -1,4 +1,5 @@
-﻿using BookstoreApplication.Data;
+﻿using System.Threading.Tasks;
+using BookstoreApplication.Data;
 using BookstoreApplication.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,35 +14,35 @@ namespace BookstoreApplication.Repositories
             _context = context;
         }
 
-        public Award? GetById(int id)
+        public async Task<Award?> GetByIdAsync(int id)
         {
-            return _context.Awards.Find(id);
+            return await _context.Awards.FindAsync(id);
         }
 
-        public List<Award> GetAll()
+        public async Task<List<Award>> GetAllAsync()
         {
-            return _context.Awards.ToList();
+            return await _context.Awards.ToListAsync();
         }
 
-        public Award Add(Award award)
+        public async Task<Award> AddAsync(Award award)
         {
             _context.Awards.Add(award);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return award;
         }
 
-        public Award Update(Award award)
+        public async Task<Award> UpdateAsync(Award award)
         {
             _context.Awards.Update(award);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return award;
         }
 
 
-        public void Delete(Award award)
+        public async Task DeleteAsync(Award award)
         {
             _context.Awards.Remove(award);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }
