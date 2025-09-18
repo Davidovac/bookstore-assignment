@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using BookstoreApplication.Data;
 using Microsoft.EntityFrameworkCore;
+using BookstoreApplication.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
