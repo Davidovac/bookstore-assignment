@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using BookstoreApplication.Data;
 using BookstoreApplication.Models;
+using BookstoreApplication.Services;
 
 namespace BookstoreApplication.Controllers
 {
@@ -9,17 +10,31 @@ namespace BookstoreApplication.Controllers
     [ApiController]
     public class AwardsController : ControllerBase
     {
-        /*[HttpGet]
-        public IActionResult GetAll()
+        private AwardsService _awardsService;
+
+        public AwardsController(AppDbContext context)
         {
-            return Ok(DataStore.Awards);
+            _awardsService = new AwardsService(context);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync()
+        {
+            try
+            {
+                return Ok(await _awardsService.GetAllAsync());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while processing your request.");
+            }
         }
 
         // GET api/authors/5
         [HttpGet("{id}")]
-        public IActionResult GetOne(int id)
+        public async Task<IActionResult> GetOneAsync(int id)
         {
-            var award = DataStore.Awards.FirstOrDefault(a => a.Id == id);
+            var award = await _awardsService.GetByIdAsync(id);
             if (award == null)
             {
                 return NotFound();
@@ -29,54 +44,43 @@ namespace BookstoreApplication.Controllers
 
         // POST api/authors
         [HttpPost]
-        public IActionResult Post(Author award)
+        public async Task<IActionResult> PostAsync(Award award)
         {
-            award.Id = DataStore.GetNewAuthorId();
-            DataStore.Awards.Add(award);
+            var existingAward = await _awardsService.GetByIdAsync(award.Id);
             return Ok(award);
         }
 
         // PUT api/authors/5
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Author award)
+        public async Task<IActionResult> Put(int id, Award award)
         {
             if (id != award.Id)
             {
                 return BadRequest();
             }
 
-            var existingAward = DataStore.Awards.FirstOrDefault(a => a.Id == id);
+            var existingAward = await _awardsService.GetByIdAsync(id);
             if (existingAward == null)
             {
                 return NotFound();
             }
 
-            int index = DataStore.Awards.IndexOf(existingAward);
-            if (index == -1)
-            {
-                return NotFound();
-
-            }
-
-            DataStore.Awards[index] = award;
+            await _awardsService.UpdateAsync(award);
             return Ok(award);
         }
 
         // DELETE api/authors/5
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var award = DataStore.Awards.FirstOrDefault(a => a.Id == id);
+            var award = await _awardsService.GetByIdAsync(id);
             if (award == null)
             {
                 return NotFound();
             }
-            DataStore.Authors.Remove(award);
-
-            // kaskadno brisanje svih knjiga obrisanog autora
-            DataStore.Awards.RemoveAll(a => a.AwardId == id);
+            await _awardsService.DeleteAsync(id);
 
             return NoContent();
-        }*/
+        }
     }
 }

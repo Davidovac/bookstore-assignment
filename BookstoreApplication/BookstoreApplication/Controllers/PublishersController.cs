@@ -3,6 +3,7 @@ using BookstoreApplication.Data;
 using BookstoreApplication.DTOs;
 using BookstoreApplication.Models;
 using BookstoreApplication.Repositories;
+using BookstoreApplication.Services;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,12 +15,12 @@ namespace BookstoreApplication.Controllers
     [ApiController]
     public class PublishersController : ControllerBase
     {
-        private PublishersRepository _publishersRepo;
+        private PublishersService _publishersService;
         private AppDbContext _context;
 
         public PublishersController(AppDbContext context)
         {
-            _publishersRepo = new PublishersRepository(context);
+            _publishersService = new PublishersService(context);
         }
 
         // GET: api/publishers
@@ -28,7 +29,7 @@ namespace BookstoreApplication.Controllers
         {
             try
             {
-                return Ok(await _publishersRepo.GetAllAsync());
+                return Ok(await _publishersService.GetAllAsync());
             }
             catch (Exception ex)
             {
@@ -40,7 +41,7 @@ namespace BookstoreApplication.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOneAsync(int id)
         {
-            var publisher = await _publishersRepo.GetByIdAsync(id);
+            var publisher = await _publishersService.GetByIdAsync(id);
             if (publisher == null)
             {
                 return NotFound();
@@ -54,14 +55,7 @@ namespace BookstoreApplication.Controllers
         {
             try
             {
-                Publisher publisher = new Publisher
-                {
-                    Id = dto.Id,
-                    Name = dto.Name,
-                    Address = dto.Address,
-                    Website = dto.Website
-                };
-                await _publishersRepo.AddAsync(publisher);
+                await _publishersService.AddAsync(dto);
                 return Ok(dto);
             }
             catch (Exception ex)
@@ -81,17 +75,13 @@ namespace BookstoreApplication.Controllers
                     return BadRequest();
                 }
 
-                var existingPublisher = await _publishersRepo.GetByIdAsync(id);
+                var existingPublisher = await _publishersService.GetByIdAsync(id);
                 if (existingPublisher == null)
                 {
                     return NotFound();
                 }
-                existingPublisher.Id = dto.Id;
-                existingPublisher.Name = dto.Name;
-                existingPublisher.Address = dto.Address;
-                existingPublisher.Website = dto.Website;
 
-                await _publishersRepo.UpdateAsync(existingPublisher);
+                await _publishersService.UpdateAsync(dto);
                 return Ok(dto);
             }
             catch (Exception ex)
@@ -106,12 +96,12 @@ namespace BookstoreApplication.Controllers
         {
             try
             {
-                var publisher = await _publishersRepo.GetByIdAsync(id);
+                var publisher = await _publishersService.GetByIdAsync(id);
                 if (publisher == null)
                 {
                     return NotFound();
                 }
-                await _publishersRepo.DeleteAsync(publisher);
+                await _publishersService.DeleteAsync(publisher);
 
                 return NoContent();
             }
