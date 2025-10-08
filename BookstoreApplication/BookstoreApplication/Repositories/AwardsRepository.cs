@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookstoreApplication.Repositories
 {
-    public class AwardsRepository
+    public class AwardsRepository : IAwardsRepository
     {
         private AppDbContext _context;
 

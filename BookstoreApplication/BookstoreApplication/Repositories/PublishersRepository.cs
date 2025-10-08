@@ -7,7 +7,7 @@ using Publisher = BookstoreApplication.Models.Publisher;
 
 namespace BookstoreApplication.Repositories
 {
-    public class PublishersRepository
+    public class PublishersRepository : IPublishersRepository
     {
         private AppDbContext _context;
 

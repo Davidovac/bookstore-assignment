@@ -1,7 +1,10 @@
 ﻿using System;
-using BookstoreApplication.Data;
-using Microsoft.EntityFrameworkCore;
 using BookstoreApplication.Controllers;
+using BookstoreApplication.Data;
+using BookstoreApplication.Models;
+using BookstoreApplication.Repositories;
+using BookstoreApplication.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +22,14 @@ builder.Services.AddCors(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IBooksService, BooksService>();
+builder.Services.AddScoped<IAuthorsService, AuthorsService>();
+builder.Services.AddScoped<IPublishersService, PublishersService>();
+builder.Services.AddScoped<IAwardsService, AwardsService>();
+builder.Services.AddScoped<IPublishersRepository, PublishersRepository>();
+builder.Services.AddScoped<IAuthorsRepository, AuthorsRepository>();
+builder.Services.AddScoped<IBooksRepository, BooksRepository>();
+builder.Services.AddScoped<IAwardsRepository, AwardsRepository>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 

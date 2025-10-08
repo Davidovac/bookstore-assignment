@@ -2,18 +2,17 @@
 using BookstoreApplication.DTOs;
 using BookstoreApplication.Models;
 using BookstoreApplication.Repositories;
+using NuGet.Protocol.Core.Types;
 
 namespace BookstoreApplication.Services
 {
-    public class PublishersService
+    public class PublishersService : IPublishersService
     {
-        private AppDbContext _context;
-        private PublishersRepository _repository;
+        private IPublishersRepository _repository;
 
-        public PublishersService(AppDbContext context)
+        public PublishersService(IPublishersRepository repository)
         {
-            _context = context;
-            _repository = new PublishersRepository(_context);
+            _repository = repository;
         }
 
         public async Task<List<Publisher>?> GetAllAsync()

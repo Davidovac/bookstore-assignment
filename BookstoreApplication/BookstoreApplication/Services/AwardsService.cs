@@ -1,18 +1,17 @@
 ﻿using BookstoreApplication.Data;
 using BookstoreApplication.Models;
 using BookstoreApplication.Repositories;
+using NuGet.Protocol.Core.Types;
 
 namespace BookstoreApplication.Services
 {
-    public class AwardsService
+    public class AwardsService : IAwardsService
     {
-        private AppDbContext _context;
-        private AwardsRepository _repository;
+        private IAwardsRepository _repository;
 
-        public AwardsService(AppDbContext context)
+        public AwardsService(IAwardsRepository repository)
         {
-            _context = context;
-            _repository = new AwardsRepository(_context);
+            _repository = repository;
         }
 
         public async Task<List<Award>?> GetAllAsync()

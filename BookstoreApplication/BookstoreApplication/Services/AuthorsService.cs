@@ -4,15 +4,13 @@ using BookstoreApplication.Repositories;
 
 namespace BookstoreApplication.Services
 {
-    public class AuthorsService
+    public class AuthorsService : IAuthorsService
     {
-        private AppDbContext _context;
-        private AuthorsRepository _repository;
+        private IAuthorsRepository _repository;
 
-        public AuthorsService(AppDbContext context)
+        public AuthorsService(IAuthorsRepository repository)
         {
-            _context = context;
-            _repository = new AuthorsRepository(_context);
+            _repository = repository;
         }
 
         public async Task<List<Author>?> GetAllAsync()

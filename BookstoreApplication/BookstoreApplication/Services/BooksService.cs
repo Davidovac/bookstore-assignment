@@ -4,18 +4,17 @@ using BookstoreApplication.DTOs;
 using BookstoreApplication.Models;
 using BookstoreApplication.Repositories;
 using Humanizer;
+using NuGet.Protocol.Core.Types;
 
 namespace BookstoreApplication.Services
 {
-    public class BooksService
+    public class BooksService : IBooksService
     {
-        private AppDbContext _context;
-        private BooksRepository _repository;
+        private IBooksRepository _repository;
 
-        public BooksService(AppDbContext context)
+        public BooksService(IBooksRepository repository)
         {
-            _context = context;
-            _repository = new BooksRepository(_context);
+            _repository = repository;
         }
 
         public async Task<List<BookDto>?> GetAllAsync()

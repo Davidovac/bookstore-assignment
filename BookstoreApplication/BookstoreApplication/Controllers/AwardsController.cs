@@ -10,11 +10,11 @@ namespace BookstoreApplication.Controllers
     [ApiController]
     public class AwardsController : ControllerBase
     {
-        private AwardsService _awardsService;
+        private IAwardsService _awardsService;
 
-        public AwardsController(AppDbContext context)
+        public AwardsController(IAwardsService awardsService)
         {
-            _awardsService = new AwardsService(context);
+            _awardsService = awardsService;
         }
 
         [HttpGet]
