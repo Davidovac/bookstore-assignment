@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using BookstoreApplication.Data;
 using BookstoreApplication.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,9 +38,8 @@ namespace BookstoreApplication.Repositories
         }
 
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Award award)
         {
-            Award? award = _context.Awards.Find(id);
             _context.Awards.Remove(award);
             await _context.SaveChangesAsync();
         }

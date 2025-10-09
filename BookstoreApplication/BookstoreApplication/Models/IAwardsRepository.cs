@@ -1,11 +1,11 @@
 ﻿namespace BookstoreApplication.Models
 {
-    public interface IAwardsService
+    public interface IAwardsRepository
     {
-        Task<List<Award>> GetAllAsync();
         Task<Award?> GetByIdAsync(int id);
+        Task<List<Award>> GetAllAsync();
         Task<Award> AddAsync(Award award);
         Task<Award> UpdateAsync(Award award);
-        Task DeleteAsync(int id);
+        Task DeleteAsync(Award award);
     }
 }

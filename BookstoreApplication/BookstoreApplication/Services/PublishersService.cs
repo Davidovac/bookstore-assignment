@@ -1,8 +1,5 @@
-﻿using BookstoreApplication.Data;
-using BookstoreApplication.DTOs;
+﻿using BookstoreApplication.DTOs;
 using BookstoreApplication.Models;
-using BookstoreApplication.Repositories;
-using NuGet.Protocol.Core.Types;
 
 namespace BookstoreApplication.Services
 {

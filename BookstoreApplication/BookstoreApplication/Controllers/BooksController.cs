@@ -1,8 +1,5 @@
 ﻿using System.Threading.Tasks;
-using BookstoreApplication.Data;
 using BookstoreApplication.DTOs;
-using BookstoreApplication.Models;
-using BookstoreApplication.Repositories;
 using BookstoreApplication.Services;
 using Microsoft.AspNetCore.Mvc;
 

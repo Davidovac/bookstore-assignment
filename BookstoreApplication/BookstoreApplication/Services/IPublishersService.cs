@@ -1,6 +1,7 @@
 ﻿using BookstoreApplication.DTOs;
+using BookstoreApplication.Models;
 
-namespace BookstoreApplication.Models
+namespace BookstoreApplication.Services
 {
     public interface IPublishersService
     {

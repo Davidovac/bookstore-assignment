@@ -1,6 +1,5 @@
-﻿using BookstoreApplication.Data;
-using BookstoreApplication.Models;
-using BookstoreApplication.Repositories;
+﻿using BookstoreApplication.Models;
+using Microsoft.EntityFrameworkCore;
 using NuGet.Protocol.Core.Types;
 
 namespace BookstoreApplication.Services
@@ -36,7 +35,12 @@ namespace BookstoreApplication.Services
 
         public async Task DeleteAsync(int id)
         {
-            await _repository.DeleteAsync(id);
+            Award? award = await _repository.GetByIdAsync(id);
+            if (award == null)
+            {
+                throw new ArgumentException($"Award with id {id} not found");
+            }
+            await _repository.DeleteAsync(award);
         }
     }
 }

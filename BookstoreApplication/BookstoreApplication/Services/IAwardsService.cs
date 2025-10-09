@@ -1,11 +1,11 @@
 ﻿using BookstoreApplication.Models;
 
-namespace BookstoreApplication.Repositories
+namespace BookstoreApplication.Services
 {
-    public interface IAwardsRepository
+    public interface IAwardsService
     {
-        Task<Award?> GetByIdAsync(int id);
         Task<List<Award>> GetAllAsync();
+        Task<Award?> GetByIdAsync(int id);
         Task<Award> AddAsync(Award award);
         Task<Award> UpdateAsync(Award award);
         Task DeleteAsync(int id);

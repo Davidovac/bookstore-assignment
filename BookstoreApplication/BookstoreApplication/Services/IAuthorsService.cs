@@ -1,4 +1,6 @@
-﻿namespace BookstoreApplication.Models
+﻿using BookstoreApplication.Models;
+
+namespace BookstoreApplication.Services
 {
     public interface IAuthorsService
     {

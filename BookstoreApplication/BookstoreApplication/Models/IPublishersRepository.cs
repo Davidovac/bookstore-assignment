@@ -1,6 +1,4 @@
-﻿using BookstoreApplication.Models;
-
-namespace BookstoreApplication.Repositories
+﻿namespace BookstoreApplication.Models
 {
     public interface IPublishersRepository
     {

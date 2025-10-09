@@ -1,6 +1,4 @@
-﻿using BookstoreApplication.Data;
-using BookstoreApplication.Models;
-using BookstoreApplication.Repositories;
+﻿using BookstoreApplication.Models;
 
 namespace BookstoreApplication.Services
 {
