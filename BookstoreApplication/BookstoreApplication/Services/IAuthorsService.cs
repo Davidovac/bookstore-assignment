@@ -7,7 +7,7 @@ namespace BookstoreApplication.Services
         Task<List<Author>?> GetAllAsync();
         Task<Author?> GetByIdAsync(int id);
         Task<Author> AddAsync(Author author);
-        Task<Author> UpdateAsync(Author author);
-        Task DeleteAsync(Author author);
+        Task<Author> UpdateAsync(int id, Author author);
+        Task DeleteAsync(int id);
     }
 }

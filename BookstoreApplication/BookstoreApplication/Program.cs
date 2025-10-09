@@ -27,6 +27,8 @@ builder.Services.AddAutoMapper(cfg => {
     cfg.AddProfile<MappingProfile>();
 });
 
+builder.Services.AddTransient<ExceptionHandlingMiddleware>();
+
 builder.Services.AddScoped<IBooksService, BooksService>();
 builder.Services.AddScoped<IAuthorsService, AuthorsService>();
 builder.Services.AddScoped<IPublishersService, PublishersService>();
@@ -46,6 +48,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseCors("AllowReactApp");
 

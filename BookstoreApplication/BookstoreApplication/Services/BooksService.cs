@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BookstoreApplication.DTOs;
+using BookstoreApplication.Exceptions;
 using BookstoreApplication.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,14 +9,18 @@ namespace BookstoreApplication.Services
     public class BooksService : IBooksService
     {
         private readonly IBooksRepository _repository;
+        private readonly IAuthorsService _authorsService;
+        private readonly IPublishersService _publishersService;
         private readonly IMapper _mapper;
 
-        public BooksService(IBooksRepository repository, IMapper mapper)
+        public BooksService(IBooksRepository repository, IAuthorsService authorsService, IPublishersService publishersService, IMapper mapper)
         {
             _repository = repository;
+            _authorsService = authorsService;
+            _publishersService = publishersService;
             _mapper = mapper;
         }
-
+        
         public async Task<List<BookDto>?> GetAllAsync()
         {
             var books = await _repository.GetAllAsync();
@@ -23,14 +28,7 @@ namespace BookstoreApplication.Services
             {
                 throw new Exception("No books found");
             }
-            try
-            {
-                return _mapper.Map<List<BookDto>>(books);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error mapping books", ex);
-            }
+            return _mapper.Map<List<BookDto>>(books);
         }
 
         public async Task<BookDetailsDto?> GetByIdAsync(int id)
@@ -38,60 +36,52 @@ namespace BookstoreApplication.Services
             var book = await _repository.GetByIdAsync(id);
             if (book == null)
             {
-                throw new Exception("Book not found");
+                throw new NotFoundException(id);
             }
             return _mapper.Map<BookDetailsDto>(book);
         }
 
-        public async Task<Book> AddAsync(BookSimpleDto dto, Models.Publisher publisher, Author author)
+        public async Task<Book> GetBookAsync(int id)
         {
-            Book book = new Book
+            var book = await _repository.GetBookAsync(id);
+            if (book == null)
             {
-                Id = dto.Id,
-                Title = dto.Title,
-                PageCount = dto.PageCount,
-                PublishedDate = dto.PublishedDate.ToUniversalTime(),
-                ISBN = dto.ISBN,
-                AuthorId = dto.AuthorId,
-                Author = author,
-                PublisherId = dto.PublisherId,
-                Publisher = publisher
-            };
-            await _repository.AddAsync(book);
+                throw new NotFoundException(id);
+            }
             return book;
         }
 
-        public async Task<Book> UpdateAsync(int id, BookSimpleDto dto)
+        public async Task<BookDetailsDto> CreateAndLinkAsync(BookSimpleDto dto)
         {
-            var book = await GetBookAsync(id);
-            if (book == null)
-            {
-                throw new Exception("Book not found");
-            }
+            var author = await _authorsService.GetByIdAsync(dto.AuthorId);
+            var publisher = await _publishersService.GetByIdAsync(dto.PublisherId);
 
-            book.Title = dto.Title;
-            book.PageCount = dto.PageCount;
-            book.PublishedDate = dto.PublishedDate.ToUniversalTime();
-            book.ISBN = dto.ISBN;
-            book.AuthorId = dto.AuthorId;
-            book.PublisherId = dto.PublisherId;
+            Book book = _mapper.Map<Book>(dto);
+            book.Publisher = publisher;
+            book.Author = author;
+            await _repository.AddAsync(book);
+            return _mapper.Map<BookDetailsDto>(book);
+        }
+
+        public async Task<BookDetailsDto> UpdateAsync(int id, BookSimpleDto dto)
+        {
+            if (id != dto.Id)
+            {
+                throw new BadRequestException("Identifier value is invalid.");
+            }
+            var bookCheck = await GetBookAsync(id);
+
+            Book book = _mapper.Map<Book>(dto);
+
             await _repository.UpdateAsync(book);
-            return book;
+            return _mapper.Map<BookDetailsDto>(book);
         }
 
         public async Task DeleteAsync(int id)
         {
-            Book? book = await _repository.GetBookAsync(id);
-            if (book == null)
-            {
-                throw new ArgumentException($"Book with id {id} not found");
-            }
+            Book? book = await GetBookAsync(id);
             await _repository.DeleteAsync(book);
         }
 
-        public async Task<Book> GetBookAsync(int id)
-        {
-            return await _repository.GetBookAsync(id);
-        }
     }
 }

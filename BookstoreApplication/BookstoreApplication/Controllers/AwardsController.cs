@@ -20,66 +20,44 @@ namespace BookstoreApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            try
-            {
-                return Ok(await _awardsService.GetAllAsync());
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "An error occurred while processing your request.");
-            }
+            return Ok(await _awardsService.GetAllAsync());
         }
 
         // GET api/authors/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOneAsync(int id)
         {
-            var award = await _awardsService.GetByIdAsync(id);
-            if (award == null)
-            {
-                return NotFound();
-            }
-            return Ok(award);
+            return Ok(await _awardsService.GetByIdAsync(id));
         }
 
         // POST api/authors
         [HttpPost]
         public async Task<IActionResult> PostAsync(Award award)
         {
-            var existingAward = await _awardsService.GetByIdAsync(award.Id);
-            return Ok(award);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            return Ok(await _awardsService.AddAsync(award));
         }
 
         // PUT api/authors/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, Award award)
         {
-            if (id != award.Id)
+            if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
 
-            var existingAward = await _awardsService.GetByIdAsync(id);
-            if (existingAward == null)
-            {
-                return NotFound();
-            }
-
-            await _awardsService.UpdateAsync(award);
-            return Ok(award);
+            return Ok(await _awardsService.UpdateAsync(id, award));
         }
 
         // DELETE api/authors/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var award = await _awardsService.GetByIdAsync(id);
-            if (award == null)
-            {
-                return NotFound();
-            }
             await _awardsService.DeleteAsync(id);
-
             return NoContent();
         }
     }

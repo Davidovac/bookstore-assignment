@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using BookstoreApplication.Data;
 using BookstoreApplication.DTOs;
+using BookstoreApplication.Models;
 using BookstoreApplication.Repositories;
 using BookstoreApplication.Services;
 using Humanizer;
@@ -25,88 +26,40 @@ namespace BookstoreApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            try
-            {
-                return Ok(await _publishersService.GetAllAsync());
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "An error occurred while processing your request.");
-            }
+            return Ok(await _publishersService.GetAllAsync());
         }
 
         // GET api/publishers/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOneAsync(int id)
         {
-            var publisher = await _publishersService.GetByIdAsync(id);
-            if (publisher == null)
-            {
-                return NotFound();
-            }
-            return Ok(publisher);
+            return Ok(await _publishersService.GetByIdAsync(id));
         }
 
         // POST api/publishers
         [HttpPost]
-        public async Task<IActionResult> PostAsync(PublisherDto dto)
+        public async Task<IActionResult> PostAsync(Publisher publisher)
         {
-            try
-            {
-                await _publishersService.AddAsync(dto);
-                return Ok(dto);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "An error occurred while processing your request.");
-            }
+            return Ok(await _publishersService.AddAsync(publisher));
         }
 
         // PUT api/publishers/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAsync(int id, PublisherDto dto)
+        public async Task<IActionResult> PutAsync(int id, Publisher publisher)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                if (id != dto.Id)
-                {
-                    return BadRequest();
-                }
-
-                var existingPublisher = await _publishersService.GetByIdAsync(id);
-                if (existingPublisher == null)
-                {
-                    return NotFound();
-                }
-
-                await _publishersService.UpdateAsync(dto);
-                return Ok(dto);
+                return BadRequest(ModelState);
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "An error occurred while processing your request.");
-            }
+            return Ok(await _publishersService.UpdateAsync(id, publisher));
         }
 
         // DELETE api/publishers/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            try
-            {
-                var publisher = await _publishersService.GetByIdAsync(id);
-                if (publisher == null)
-                {
-                    return NotFound();
-                }
-                await _publishersService.DeleteAsync(publisher);
-
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "An error occurred while processing your request.");
-            }
+            await _publishersService.DeleteAsync(id);
+            return NoContent();
         }
     }
 }

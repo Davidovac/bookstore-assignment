@@ -1,4 +1,8 @@
-﻿using BookstoreApplication.Models;
+﻿using AutoMapper;
+using BookstoreApplication.DTOs;
+using BookstoreApplication.Exceptions;
+using BookstoreApplication.Models;
+using Humanizer;
 
 namespace BookstoreApplication.Services
 {
@@ -13,12 +17,22 @@ namespace BookstoreApplication.Services
 
         public async Task<List<Author>?> GetAllAsync()
         {
-            return await _repository.GetAllAsync();
+            var authors = await _repository.GetAllAsync();
+            if (authors == null)
+            {
+                throw new Exception("No authors found");
+            }
+            return authors;
         }
 
         public async Task<Author?> GetByIdAsync(int id)
         {
-            return await _repository.GetByIdAsync(id);
+            var author = await _repository.GetByIdAsync(id);
+            if (author == null)
+            {
+                throw new NotFoundException(id);
+            }
+            return author;
         }
 
         public async Task<Author> AddAsync(Author author)
@@ -26,13 +40,20 @@ namespace BookstoreApplication.Services
             return await _repository.AddAsync(author);
         }
 
-        public async Task<Author> UpdateAsync(Author author)
+        public async Task<Author> UpdateAsync(int id, Author author)
         {
+            if (id != author.Id)
+            {
+                throw new BadRequestException("Identifier value is invalid.");
+            }
+            await GetByIdAsync(id); // Ensure the author exists
+
             return await _repository.UpdateAsync(author);
         }
 
-        public async Task DeleteAsync(Author author)
+        public async Task DeleteAsync(int id)
         {
+            var author = await GetByIdAsync(id);
             await _repository.DeleteAsync(author);
         }
 

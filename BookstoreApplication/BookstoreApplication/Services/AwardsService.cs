@@ -1,4 +1,5 @@
-﻿using BookstoreApplication.Models;
+﻿using BookstoreApplication.Exceptions;
+using BookstoreApplication.Models;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Protocol.Core.Types;
 
@@ -15,12 +16,22 @@ namespace BookstoreApplication.Services
 
         public async Task<List<Award>?> GetAllAsync()
         {
-            return await _repository.GetAllAsync();
+            var awards = await _repository.GetAllAsync();
+            if (awards == null)
+            {
+                throw new Exception("No awards found");
+            }
+            return awards;
         }
 
         public async Task<Award?> GetByIdAsync(int id)
         {
-            return await _repository.GetByIdAsync(id);
+            var award = await _repository.GetByIdAsync(id);
+            if (award == null)
+            {
+                throw new NotFoundException(id);
+            }
+            return award;
         }
 
         public async Task<Award> AddAsync(Award award)
@@ -28,18 +39,20 @@ namespace BookstoreApplication.Services
             return await _repository.AddAsync(award);
         }
 
-        public async Task<Award> UpdateAsync(Award award)
+        public async Task<Award> UpdateAsync(int id, Award award)
         {
+            if (id != award.Id)
+            {
+                throw new BadRequestException("Identifier value is invalid.");
+            }
+            await GetByIdAsync(id); // Ensure the award exists
+
             return await _repository.UpdateAsync(award);
         }
 
         public async Task DeleteAsync(int id)
         {
-            Award? award = await _repository.GetByIdAsync(id);
-            if (award == null)
-            {
-                throw new ArgumentException($"Award with id {id} not found");
-            }
+            var award = await GetByIdAsync(id);
             await _repository.DeleteAsync(award);
         }
     }

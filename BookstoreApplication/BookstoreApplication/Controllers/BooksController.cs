@@ -26,111 +26,45 @@ namespace BookstoreApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            try
-            {
-                return Ok(await _booksService.GetAllAsync());
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "An error occurred while processing your request.");
-            }
-
+            return Ok(await _booksService.GetAllAsync());
         }
 
         // GET api/books/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOneAsync(int id)
         {
-            var book = await _booksService.GetByIdAsync(id);
-            if (book == null)
-            {
-                return NotFound();
-            }
-            return Ok(book);
+            return Ok(await _booksService.GetByIdAsync(id));
         }
 
         // POST api/books
         [HttpPost]
         public async Task<IActionResult> PostAsync(BookSimpleDto dto)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                // kreiranje knjige je moguće ako je izabran postojeći autor
-                var author = await _authorsService.GetByIdAsync(dto.AuthorId);
-                if (author == null)
-                {
-                    return BadRequest();
-                }
-
-                // kreiranje knjige je moguće ako je izabran postojeći izdavač
-                var publisher = await _publishersService.GetByIdAsync(dto.PublisherId);
-                if (publisher == null)
-                {
-                    return BadRequest();
-                }
-
-                await _booksService.AddAsync(dto, publisher, author);
-                return Ok(dto);
+                return BadRequest(ModelState);
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "An error occurred while processing your request.");
-            }
-
+            return Ok(await _booksService.CreateAndLinkAsync(dto));
         }
 
         // PUT api/books/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAsync(int id, BookSimpleDto dto)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                if (id != dto.Id)
-                {
-                    return BadRequest();
-                }
-
-                // izmena knjige je moguća ako je izabran postojeći autor
-                var author = await _authorsService.GetByIdAsync(dto.AuthorId);
-                if (author == null)
-                {
-                    return BadRequest();
-                }
-
-                // izmena knjige je moguća ako je izabran postojeći izdavač
-                var publisher = await _publishersService.GetByIdAsync(dto.PublisherId);
-                if (publisher == null)
-                {
-                    return BadRequest();
-                }
-
-                await _booksService.UpdateAsync(id, dto);
-                return Ok(dto);
+                return BadRequest(ModelState);
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "An error occurred while processing your request.");
-            }
+
+            return Ok(await _booksService.UpdateAsync(id, dto));
         }
 
         // DELETE api/books/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            try
-            {
-                var book = await _booksService.GetByIdAsync(id);
-                if (book == null)
-                {
-                    return NotFound();
-                }
-                await _booksService.DeleteAsync(id);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "An error occurred while processing your request.");
-            }
+            await _booksService.DeleteAsync(id);
+            return NoContent();
         }
     }
 }

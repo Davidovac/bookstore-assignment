@@ -7,8 +7,8 @@ namespace BookstoreApplication.Services
     {
         Task<List<BookDto>?> GetAllAsync();
         Task<BookDetailsDto?> GetByIdAsync(int id);
-        Task<Book> AddAsync(BookSimpleDto dto, Publisher publisher, Author author);
-        Task<Book> UpdateAsync(int id, BookSimpleDto dto);
+        Task<BookDetailsDto> CreateAndLinkAsync(BookSimpleDto dto);
+        Task<BookDetailsDto> UpdateAsync(int id, BookSimpleDto dto);
         Task DeleteAsync(int id);
     }
 }

@@ -24,66 +24,44 @@ namespace BookstoreApplication.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            try
-            {
-                return Ok(await _authorsService.GetAllAsync());
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "An error occurred while processing your request.");
-            }
+            return Ok(await _authorsService.GetAllAsync());
         }
 
         // GET api/authors/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOneAsync(int id)
         {
-            var author = await _authorsService.GetByIdAsync(id);
-            if (author == null)
-            {
-                return NotFound();
-            }
-            return Ok(author);
+            return Ok(await _authorsService.GetByIdAsync(id));
         }
 
         // POST api/authors
         [HttpPost]
         public async Task<IActionResult> PostAsync(Author author)
         {
-            var existingAuthor = await _authorsService.GetByIdAsync(author.Id);
-            return Ok(author);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            return Ok(await _authorsService.AddAsync(author));
         }
 
         // PUT api/authors/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, Author author)
         {
-            if (id != author.Id)
+            if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
 
-            var existingAuthor = await _authorsService.GetByIdAsync(id);
-            if (existingAuthor == null)
-            {
-                return NotFound();
-            }
-
-            await _authorsService.UpdateAsync(author);
-            return Ok(author);
+            return Ok(_authorsService.UpdateAsync(id, author));
         }
 
         // DELETE api/authors/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var author = await _authorsService.GetByIdAsync(id);
-            if (author == null)
-            {
-                return NotFound();
-            }
-            await _authorsService.DeleteAsync(author);
-
+            await _authorsService.DeleteAsync(id);
             return NoContent();
         }
     }

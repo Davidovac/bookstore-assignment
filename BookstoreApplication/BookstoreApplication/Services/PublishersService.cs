@@ -1,4 +1,5 @@
 ﻿using BookstoreApplication.DTOs;
+using BookstoreApplication.Exceptions;
 using BookstoreApplication.Models;
 
 namespace BookstoreApplication.Services
@@ -14,40 +15,44 @@ namespace BookstoreApplication.Services
 
         public async Task<List<Publisher>?> GetAllAsync()
         {
-            return await _repository.GetAllAsync();
+            var publishers = await _repository.GetAllAsync();
+            if (publishers == null)
+            {
+                throw new Exception("No publishers found");
+            }
+            return publishers;
         }
 
         public async Task<Publisher?> GetByIdAsync(int id)
         {
-            return await _repository.GetByIdAsync(id);
+            var publisher = await _repository.GetByIdAsync(id);
+            if (publisher == null)
+            {
+                throw new NotFoundException(id);
+            }
+            return publisher;
         }
 
-        public async Task<Publisher> AddAsync(PublisherDto dto)
+        public async Task<Publisher> AddAsync(Publisher publisher)
         {
-            Publisher publisher = new Publisher
-            {
-                Id = dto.Id,
-                Name = dto.Name,
-                Address = dto.Address,
-                Website = dto.Website
-            };
             return await _repository.AddAsync(publisher);
         }
 
-        public async Task<Publisher> UpdateAsync(PublisherDto dto)
+        public async Task<Publisher> UpdateAsync(int id, Publisher publisher)
         {
-            Publisher publisher = new Publisher
+            if (id != publisher.Id)
             {
-                Id = dto.Id,
-                Name = dto.Name,
-                Address = dto.Address,
-                Website = dto.Website
-            };
+                throw new BadRequestException("Identifier value is invalid.");
+            }
+
+            await GetByIdAsync(id); // Ensure the publisher exists
+
             return await _repository.UpdateAsync(publisher);
         }
 
-        public async Task DeleteAsync(Publisher publisher)
+        public async Task DeleteAsync(int id)
         {
+            var publisher = await GetByIdAsync(id);
             await _repository.DeleteAsync(publisher);
         }
 
