@@ -9,8 +9,8 @@ namespace BookstoreApplication.Settings
     // You may need to install the Microsoft.AspNetCore.Http.Abstractions package into your project
     internal sealed class ExceptionHandlingMiddleware : IMiddleware
     {
-        public ExceptionHandlingMiddleware() { }
-
+        private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+        public ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> logger) => _logger = logger;
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             try
@@ -19,6 +19,7 @@ namespace BookstoreApplication.Settings
             }
             catch (Exception e)
             {
+                _logger.LogError(e, e.Message);
                 await HandleExceptionAsync(context, e);
             }
         }

@@ -9,10 +9,12 @@ namespace BookstoreApplication.Services
     public class AuthorsService : IAuthorsService
     {
         private IAuthorsRepository _repository;
+        private readonly ILogger<AuthorsService> _logger;
 
-        public AuthorsService(IAuthorsRepository repository)
+        public AuthorsService(IAuthorsRepository repository, ILogger<AuthorsService> logger)
         {
             _repository = repository;
+            _logger = logger;
         }
 
         public async Task<List<Author>?> GetAllAsync()
@@ -27,6 +29,7 @@ namespace BookstoreApplication.Services
 
         public async Task<Author?> GetByIdAsync(int id)
         {
+            
             var author = await _repository.GetByIdAsync(id);
             if (author == null)
             {
