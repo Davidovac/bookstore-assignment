@@ -5,7 +5,7 @@ namespace BookstoreApplication.Services
 {
     public interface IBooksService
     {
-        Task<List<BookDto>?> GetAllAsync();
+        Task<List<BookDto>?> GetAllAsync(int sort);
         Task<BookDetailsDto?> GetByIdAsync(int id);
         Task<BookDetailsDto> CreateAndLinkAsync(BookSimpleDto dto);
         Task<BookDetailsDto> UpdateAsync(int id, BookSimpleDto dto);

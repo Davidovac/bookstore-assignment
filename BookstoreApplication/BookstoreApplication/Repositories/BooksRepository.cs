@@ -27,12 +27,13 @@ namespace BookstoreApplication.Repositories
                 .FirstOrDefaultAsync(b => b.Id == id);
         }
 
-        public async Task<List<Book>?> GetAllAsync()
+        public async Task<List<Book>?> GetAllAsync(int sort)
         {
-            return await _context.Books
+            IQueryable<Book> query = _context.Books
                 .Include(b => b.Author)
-                .Include(b => b.Publisher)
-                .ToListAsync();
+                .Include(b => b.Publisher);
+            query = ApplySorting(query, sort);
+            return await query.ToListAsync();
         }
 
         public async Task<Book?> AddAsync(Book book)
@@ -54,6 +55,19 @@ namespace BookstoreApplication.Repositories
         {
             _context.Books.Remove(book);
             await _context.SaveChangesAsync();
+        }
+
+        private static IQueryable<Book> ApplySorting(IQueryable<Book> query, int sort)
+        {
+            return sort switch
+            {
+                (int)BookSortTypes.TITLE_DESC => query.OrderByDescending(b => b.Title),
+                (int)BookSortTypes.DATE_ASC => query.OrderBy(b => b.PublishedDate),
+                (int)BookSortTypes.DATE_DESC => query.OrderByDescending(b => b.PublishedDate),
+                (int)BookSortTypes.AUTHOR_NAME_ASC => query.OrderBy(b => b.Author.FullName),
+                (int)BookSortTypes.AUTHOR_NAME_DESC => query.OrderByDescending(b => b.Author.FullName),
+                _ => query.OrderBy(b => b.Title),
+            };
         }
     }
 }

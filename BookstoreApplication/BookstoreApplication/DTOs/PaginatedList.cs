@@ -6,6 +6,7 @@
         public int Count { get; set; }
         public int PageIndex { get; set; }
         public int TotalPages { get; set; }
+        public int PageSize { get; set; }
         public bool HasPreviousPage { get; set; }
         public bool HasNextPage { get; set; }
 
@@ -14,6 +15,7 @@
             Items = items;
             Count = count;
             PageIndex = pageIndex;
+            PageSize = pageSize;
             TotalPages = (int)Math.Ceiling(count / (double)pageSize);
             HasPreviousPage = PageIndex > 0;
             HasNextPage = PageIndex < TotalPages - 1;

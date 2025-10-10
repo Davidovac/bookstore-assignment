@@ -23,10 +23,10 @@ namespace BookstoreApplication.Services
             _logger = logger;
         }
 
-        public async Task<List<BookDto>?> GetAllAsync()
+        public async Task<List<BookDto>?> GetAllAsync(int sort)
         {
             _logger.LogInformation($"Check if there are any books");
-            var books = await _repository.GetAllAsync();
+            var books = await _repository.GetAllAsync(sort);
             if (books == null)
             {
                 _logger.LogError($"No books found.");

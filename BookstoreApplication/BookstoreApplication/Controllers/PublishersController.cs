@@ -24,7 +24,7 @@ namespace BookstoreApplication.Controllers
 
         // GET: api/publishers
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync([FromQuery] string sort = "nameAsc")
+        public async Task<IActionResult> GetAllAsync([FromQuery] int sort = 0)
         {
             return Ok(await _publishersService.GetAllAsync(sort));
         }

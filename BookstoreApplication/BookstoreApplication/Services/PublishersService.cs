@@ -13,7 +13,7 @@ namespace BookstoreApplication.Services
             _repository = repository;
         }
 
-        public async Task<List<Publisher>?> GetAllAsync(string sort)
+        public async Task<List<Publisher>?> GetAllAsync(int sort)
         {
             var publishers = await _repository.GetAllAsync(sort);
             if (publishers == null)

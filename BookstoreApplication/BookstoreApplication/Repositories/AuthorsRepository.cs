@@ -23,7 +23,7 @@ namespace BookstoreApplication.Repositories
             return await _context.Authors.FindAsync(id);
         }
 
-        public async Task<PaginatedList<AuthorDto>> GetAllPagedAsync(int page)
+        public async Task<PaginatedList<Author>> GetAllPagedAsync(int page)
         {
             int pageSize = 1;
             int pageIndex = page - 1;
@@ -35,8 +35,7 @@ namespace BookstoreApplication.Repositories
               .Take(pageSize)
               .ToListAsync();
 
-            var authorsDto = _mapper.Map<List<AuthorDto>>(authors);
-            PaginatedList<AuthorDto> result = new PaginatedList<AuthorDto>(authorsDto, count, pageIndex, pageSize);
+            PaginatedList<Author> result = new PaginatedList<Author>(authors, count, pageIndex, pageSize);
             return result;
         }
 

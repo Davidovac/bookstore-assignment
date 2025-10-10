@@ -20,21 +20,11 @@ namespace BookstoreApplication.Repositories
             return await _context.Publishers.FindAsync(id);
         }
 
-        public async Task<List<Publisher>?> GetAllAsync(string sort)
+        public async Task<List<Publisher>?> GetAllAsync(int sort)
         {
-            if (sort == "nameDesc")
-            {
-                return await _context.Publishers.OrderByDescending(p => p.Name).ToListAsync();
-            }
-            else if (sort == "addressAsc")
-            {
-                return await _context.Publishers.OrderBy(p => p.Address).ToListAsync();
-            }
-            else if (sort == "addressDesc")
-            {
-                return await _context.Publishers.OrderByDescending(p => p.Address).ToListAsync();
-            }
-            return await _context.Publishers.OrderBy(p => p.Name).ToListAsync();
+            IQueryable<Publisher> query = _context.Publishers;
+            query = ApplySorting(query, sort);
+            return await query.ToListAsync();
         }
 
         public async Task<Publisher> AddAsync(Publisher publisher)
@@ -56,6 +46,17 @@ namespace BookstoreApplication.Repositories
         {
             _context.Publishers.Remove(publisher);
             await _context.SaveChangesAsync();
+        }
+
+        private static IQueryable<Publisher> ApplySorting(IQueryable<Publisher> query, int sort)
+        {
+            return sort switch
+            {
+                (int)PublisherSortTypes.NAME_DESC => query.OrderByDescending(p => p.Name),
+                (int)PublisherSortTypes.DATE_ASC => query.OrderBy(p => p.Address),
+                (int)PublisherSortTypes.DATE_DESC => query.OrderByDescending(p => p.Address),
+                _ => query.OrderBy(p => p.Name),
+            };
         }
     }
 }

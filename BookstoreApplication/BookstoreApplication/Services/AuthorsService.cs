@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Drawing.Printing;
+using AutoMapper;
 using BookstoreApplication.DTOs;
 using BookstoreApplication.Exceptions;
 using BookstoreApplication.Models;
@@ -10,11 +11,13 @@ namespace BookstoreApplication.Services
     {
         private IAuthorsRepository _repository;
         private readonly ILogger<AuthorsService> _logger;
+        private readonly IMapper _mapper;
 
-        public AuthorsService(IAuthorsRepository repository, ILogger<AuthorsService> logger)
+        public AuthorsService(IAuthorsRepository repository, ILogger<AuthorsService> logger, IMapper mapper)
         {
             _repository = repository;
             _logger = logger;
+            _mapper = mapper;
         }
 
         public async Task<PaginatedList<AuthorDto>?> GetAllAsync(int page)
@@ -23,12 +26,14 @@ namespace BookstoreApplication.Services
             {
                 page = 1;
             }
-            var authors = await _repository.GetAllPagedAsync(page);
-            if (authors == null)
+            var response = await _repository.GetAllPagedAsync(page);
+            if (response.Items == null)
             {
                 throw new Exception("No authors found");
             }
-            return authors;
+            var authorsDto = _mapper.Map<List<AuthorDto>>(response.Items);
+            PaginatedList<AuthorDto> result = new PaginatedList<AuthorDto>(authorsDto, response.Count, response.PageIndex, response.PageSize);
+            return result;
         }
 
         public async Task<Author?> GetByIdAsync(int id)
