@@ -1,9 +1,11 @@
-﻿namespace BookstoreApplication.Models
+﻿using BookstoreApplication.DTOs;
+
+namespace BookstoreApplication.Models
 {
     public interface IAuthorsRepository
     {
         Task<Author?> GetByIdAsync(int id);
-        Task<List<Author>> GetAllAsync();
+        Task<PaginatedList<AuthorDto>> GetAllPagedAsync(int page);
         Task<Author> AddAsync(Author author);
         Task<Author> UpdateAsync(Author author);
         Task DeleteAsync(Author author);

@@ -17,9 +17,13 @@ namespace BookstoreApplication.Services
             _logger = logger;
         }
 
-        public async Task<List<Author>?> GetAllAsync()
+        public async Task<PaginatedList<AuthorDto>?> GetAllAsync(int page)
         {
-            var authors = await _repository.GetAllAsync();
+            if (page < 1)
+            {
+                page = 1;
+            }
+            var authors = await _repository.GetAllPagedAsync(page);
             if (authors == null)
             {
                 throw new Exception("No authors found");

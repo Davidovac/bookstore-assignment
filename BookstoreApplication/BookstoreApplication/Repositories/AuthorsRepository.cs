@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Drawing.Printing;
+using System.Threading.Tasks;
+using AutoMapper;
+using BookstoreApplication.DTOs;
 using BookstoreApplication.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,10 +10,12 @@ namespace BookstoreApplication.Repositories
     public class AuthorsRepository : IAuthorsRepository
     {
         private AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public AuthorsRepository(AppDbContext context)
+        public AuthorsRepository(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<Author?> GetByIdAsync(int id)
@@ -18,9 +23,21 @@ namespace BookstoreApplication.Repositories
             return await _context.Authors.FindAsync(id);
         }
 
-        public async Task<List<Author>> GetAllAsync()
+        public async Task<PaginatedList<AuthorDto>> GetAllPagedAsync(int page)
         {
-            return await _context.Authors.ToListAsync();
+            int pageSize = 1;
+            int pageIndex = page - 1;
+
+            var count = await _context.Authors.CountAsync();
+
+            var authors = await _context.Authors
+              .Skip(pageIndex * pageSize)
+              .Take(pageSize)
+              .ToListAsync();
+
+            var authorsDto = _mapper.Map<List<AuthorDto>>(authors);
+            PaginatedList<AuthorDto> result = new PaginatedList<AuthorDto>(authorsDto, count, pageIndex, pageSize);
+            return result;
         }
 
         public async Task<Author> AddAsync(Author author)
