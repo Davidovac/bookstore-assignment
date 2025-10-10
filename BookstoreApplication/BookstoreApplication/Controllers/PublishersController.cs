@@ -24,9 +24,9 @@ namespace BookstoreApplication.Controllers
 
         // GET: api/publishers
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync([FromQuery] string sort = "nameAsc")
         {
-            return Ok(await _publishersService.GetAllAsync());
+            return Ok(await _publishersService.GetAllAsync(sort));
         }
 
         // GET api/publishers/5

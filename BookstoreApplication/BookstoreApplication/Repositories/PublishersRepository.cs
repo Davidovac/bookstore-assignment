@@ -20,9 +20,21 @@ namespace BookstoreApplication.Repositories
             return await _context.Publishers.FindAsync(id);
         }
 
-        public async Task<List<Publisher>?> GetAllAsync()
+        public async Task<List<Publisher>?> GetAllAsync(string sort)
         {
-            return await _context.Publishers.ToListAsync();
+            if (sort == "nameDesc")
+            {
+                return await _context.Publishers.OrderByDescending(p => p.Name).ToListAsync();
+            }
+            else if (sort == "addressAsc")
+            {
+                return await _context.Publishers.OrderBy(p => p.Address).ToListAsync();
+            }
+            else if (sort == "addressDesc")
+            {
+                return await _context.Publishers.OrderByDescending(p => p.Address).ToListAsync();
+            }
+            return await _context.Publishers.OrderBy(p => p.Name).ToListAsync();
         }
 
         public async Task<Publisher> AddAsync(Publisher publisher)

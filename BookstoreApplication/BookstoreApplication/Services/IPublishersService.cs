@@ -5,7 +5,7 @@ namespace BookstoreApplication.Services
 {
     public interface IPublishersService
     {
-        Task<List<Publisher>?> GetAllAsync();
+        Task<List<Publisher>?> GetAllAsync(string sort);
         Task<Publisher?> GetByIdAsync(int id);
         Task<Publisher> AddAsync(Publisher publisher);
         Task<Publisher> UpdateAsync(int id, Publisher publisher);

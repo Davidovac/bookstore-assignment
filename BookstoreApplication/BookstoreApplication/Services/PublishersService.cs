@@ -13,9 +13,9 @@ namespace BookstoreApplication.Services
             _repository = repository;
         }
 
-        public async Task<List<Publisher>?> GetAllAsync()
+        public async Task<List<Publisher>?> GetAllAsync(string sort)
         {
-            var publishers = await _repository.GetAllAsync();
+            var publishers = await _repository.GetAllAsync(sort);
             if (publishers == null)
             {
                 throw new Exception("No publishers found");
