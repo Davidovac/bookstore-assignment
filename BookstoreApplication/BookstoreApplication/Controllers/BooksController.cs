@@ -24,9 +24,9 @@ namespace BookstoreApplication.Controllers
 
         // GET: api/books
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync([FromQuery] int sort = 0)
+        public async Task<IActionResult> GetAllAsync([FromQuery] BookFilterMix filterMix, int sort = 0)
         {
-            return Ok(await _booksService.GetAllAsync(sort));
+            return Ok(await _booksService.GetAllAsync(sort, filterMix));
         }
 
         // GET api/books/5

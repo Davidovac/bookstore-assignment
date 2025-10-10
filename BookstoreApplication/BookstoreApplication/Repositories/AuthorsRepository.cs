@@ -39,6 +39,17 @@ namespace BookstoreApplication.Repositories
             return result;
         }
 
+        public async Task<List<AuthorNameDto>?> GetAllNamesAsync()
+        {
+            return await _context.Authors
+                .Select(a => new AuthorNameDto
+                { 
+                    Id = a.Id,
+                    FullName = a.FullName
+                })
+                .ToListAsync();
+        }
+
         public async Task<Author> AddAsync(Author author)
         {
             _context.Authors.Add(author);

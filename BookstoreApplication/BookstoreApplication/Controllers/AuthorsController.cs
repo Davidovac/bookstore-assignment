@@ -27,6 +27,13 @@ namespace BookstoreApplication.Controllers
             return Ok(await _authorsService.GetAllAsync(page));
         }
 
+        [HttpGet]
+        [Route("names")]
+        public async Task<IActionResult> GetNameListAsync()
+        {
+            return Ok(await _authorsService.GetAllNamesAsync());
+        }
+
         // GET api/authors/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOneAsync(int id)

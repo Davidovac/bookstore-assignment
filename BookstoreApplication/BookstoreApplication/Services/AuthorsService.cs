@@ -36,6 +36,16 @@ namespace BookstoreApplication.Services
             return result;
         }
 
+        public async Task<List<AuthorNameDto>?> GetAllNamesAsync()
+        {
+            var authors = await _repository.GetAllNamesAsync();
+            if (authors == null)
+            {
+                throw new Exception("No authors found");
+            }
+            return _mapper.Map<List<AuthorNameDto>>(authors);
+        }
+
         public async Task<Author?> GetByIdAsync(int id)
         {
             

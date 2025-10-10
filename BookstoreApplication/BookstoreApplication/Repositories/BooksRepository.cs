@@ -27,12 +27,13 @@ namespace BookstoreApplication.Repositories
                 .FirstOrDefaultAsync(b => b.Id == id);
         }
 
-        public async Task<List<Book>?> GetAllAsync(int sort)
+        public async Task<List<Book>?> GetAllAsync(int sort, BookFilterMix filterMix)
         {
             IQueryable<Book> query = _context.Books
                 .Include(b => b.Author)
                 .Include(b => b.Publisher);
             query = ApplySorting(query, sort);
+            query = ApplyFilters(query, filterMix);
             return await query.ToListAsync();
         }
 
@@ -68,6 +69,46 @@ namespace BookstoreApplication.Repositories
                 (int)BookSortTypes.AUTHOR_NAME_DESC => query.OrderByDescending(b => b.Author.FullName),
                 _ => query.OrderBy(b => b.Title),
             };
+        }
+
+        private static IQueryable<Book> ApplyFilters(IQueryable<Book> books, BookFilterMix filterMix)
+        {
+            if (!string.IsNullOrEmpty(filterMix.Title))
+            {
+                books = books.Where(b => b.Title.ToLower().Contains(filterMix.Title.ToLower()));
+            }
+
+            if (filterMix.FromPublished != null)
+            {
+                books = books.Where(b => b.PublishedDate >= filterMix.FromPublished);
+            }
+
+            if (filterMix.ToPublished != null)
+            {
+                books = books.Where(b => b.PublishedDate <= filterMix.ToPublished);
+            }
+
+            if (filterMix.AuthorId != null)
+            {
+                books = books.Where(b => b.AuthorId == filterMix.AuthorId);
+            }
+
+            if (!string.IsNullOrEmpty(filterMix.AuthorName))
+            {
+                books = books.Where(b => b.Author.FullName.ToLower().Contains(filterMix.AuthorName.ToLower()));
+            }
+
+            if (filterMix.FromBirthDate != null)
+            {
+                books = books.Where(b => b.Author.DateOfBirth >= filterMix.FromBirthDate);
+            }
+
+            if (filterMix.ToBirthDate != null)
+            {
+                books = books.Where(b => b.Author.DateOfBirth <= filterMix.ToBirthDate);
+            }
+
+            return books;
         }
     }
 }
