@@ -25,8 +25,8 @@ namespace BookstoreApplication.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto data)
         {
-            await _authService.Login(data);
-            return Ok(new { message = "Login successful" });
+            var response = await _authService.Login(data);
+            return Ok(response);
         }
     }
 }

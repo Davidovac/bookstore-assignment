@@ -1,8 +1,12 @@
-﻿using AutoMapper;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using AutoMapper;
 using BookstoreApplication.DTOs;
 using BookstoreApplication.Exceptions;
 using BookstoreApplication.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BookstoreApplication.Services
 {
@@ -10,12 +14,14 @@ namespace BookstoreApplication.Services
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
-        public AuthService(UserManager<User> userManager, SignInManager<User> signInManager, IMapper mapper)
+        public AuthService(UserManager<User> userManager, SignInManager<User> signInManager, IMapper mapper, IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
+            _configuration = configuration;
         }
 
         public async Task RegisterAsync(RegistrationDto data)
@@ -29,7 +35,7 @@ namespace BookstoreApplication.Services
             }
         }
 
-        public async Task Login(LoginDto data)
+        public async Task<string> Login(LoginDto data)
         {
             var user = await _userManager.FindByNameAsync(data.Username);
             if (user == null)
@@ -43,6 +49,31 @@ namespace BookstoreApplication.Services
             {
                 throw new BadRequestException("Invalid credentials.");
             }
+
+            var token = await GenerateJwt(user);
+            return token;
+        }
+
+        private async Task<string> GenerateJwt(User user)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim("username", user.UserName),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var token = new JwtSecurityToken(
+              issuer: _configuration["Jwt:Issuer"],
+              audience: _configuration["Jwt:Audience"],
+              claims: claims,
+              expires: DateTime.UtcNow.AddDays(1),
+              signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

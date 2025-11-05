@@ -9,6 +9,7 @@ namespace BookstoreApplication.Settings
         public MappingProfile()
         {
             CreateMap<RegistrationDto, User>();
+            CreateMap<User, ProfileDto>();
 
 
             CreateMap<Book, BookDto>()

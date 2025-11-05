@@ -43,7 +43,7 @@ namespace BookstoreApplication.Services
             if (book == null)
             {
                 _logger.LogError($"Book with id {id} does not exist.");
-                throw new NotFoundException(id);
+                throw new NotFoundException($"Book with id: {id} not found");
             }
             _logger.LogInformation($"Book with id {id} found.");
             return _mapper.Map<BookDetailsDto>(book);
@@ -56,7 +56,7 @@ namespace BookstoreApplication.Services
             if (book == null)
             {
                 _logger.LogError($"Book with id {id} does not exist.");
-                throw new NotFoundException(id);
+                throw new NotFoundException($"Book with id: {id} not found");
             }
             _logger.LogInformation($"Book with id {id} found.");
             return book;

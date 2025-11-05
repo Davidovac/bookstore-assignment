@@ -52,7 +52,7 @@ namespace BookstoreApplication.Services
             var author = await _repository.GetByIdAsync(id);
             if (author == null)
             {
-                throw new NotFoundException(id);
+                throw new NotFoundException($"Author with id: {id} not found");
             }
             return author;
         }

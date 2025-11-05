@@ -29,7 +29,7 @@ namespace BookstoreApplication.Services
             var award = await _repository.GetByIdAsync(id);
             if (award == null)
             {
-                throw new NotFoundException(id);
+                throw new NotFoundException($"Award with id: {id} not found");
             }
             return award;
         }

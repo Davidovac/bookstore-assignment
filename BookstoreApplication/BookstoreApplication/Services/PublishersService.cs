@@ -28,7 +28,7 @@ namespace BookstoreApplication.Services
             var publisher = await _repository.GetByIdAsync(id);
             if (publisher == null)
             {
-                throw new NotFoundException(id);
+                throw new NotFoundException($"Publisher with id: {id} not found");
             }
             return publisher;
         }
