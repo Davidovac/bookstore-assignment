@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using BookstoreApplication.DTOs;
 using BookstoreApplication.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -9,6 +10,7 @@ namespace BookstoreApplication.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BooksController : ControllerBase
     {
         private IBooksService _booksService;
@@ -23,6 +25,8 @@ namespace BookstoreApplication.Controllers
         }
 
         // GET: api/books
+
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] BookFilterMix filterMix, int sort = 0)
         {
@@ -30,6 +34,7 @@ namespace BookstoreApplication.Controllers
         }
 
         // GET api/books/5
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOneAsync(int id)
         {
@@ -37,8 +42,9 @@ namespace BookstoreApplication.Controllers
         }
 
         // POST api/books
+        [Authorize(Roles = "Librarian")]
         [HttpPost]
-        public async Task<IActionResult> PostAsync(BookSimpleDto dto)
+        public async Task<IActionResult> PostAsync(BookRequestDto dto)
         {
             if (!ModelState.IsValid)
             {
@@ -48,8 +54,9 @@ namespace BookstoreApplication.Controllers
         }
 
         // PUT api/books/5
+        [Authorize(Roles = "Editor")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAsync(int id, BookSimpleDto dto)
+        public async Task<IActionResult> PutAsync(int id, BookRequestDto dto)
         {
             if (!ModelState.IsValid)
             {
@@ -60,6 +67,7 @@ namespace BookstoreApplication.Controllers
         }
 
         // DELETE api/books/5
+        [Authorize(Roles = "Editor")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {

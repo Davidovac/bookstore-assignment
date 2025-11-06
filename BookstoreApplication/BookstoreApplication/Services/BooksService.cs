@@ -62,7 +62,7 @@ namespace BookstoreApplication.Services
             return book;
         }
 
-        public async Task<BookDetailsDto> CreateAndLinkAsync(BookSimpleDto dto)
+        public async Task<BookDetailsDto> CreateAndLinkAsync(BookRequestDto dto)
         {
             var author = await _authorsService.GetByIdAsync(dto.AuthorId);
             var publisher = await _publishersService.GetByIdAsync(dto.PublisherId);
@@ -76,7 +76,7 @@ namespace BookstoreApplication.Services
             return _mapper.Map<BookDetailsDto>(book);
         }
 
-        public async Task<BookDetailsDto> UpdateAsync(int id, BookSimpleDto dto)
+        public async Task<BookDetailsDto> UpdateAsync(int id, BookRequestDto dto)
         {
             _logger.LogInformation($"Check if sent book's ids match.");
             if (id != dto.Id)
@@ -86,11 +86,11 @@ namespace BookstoreApplication.Services
             }
             _logger.LogInformation($"Book's ids match.");
             _logger.LogInformation($"Check if book with id {id} exists.");
-            await GetBookAsync(id);
+            
             _logger.LogInformation($"Book with id {id} exists.");
 
-            Book book = _mapper.Map<Book>(dto);
-
+            Book book = await GetBookAsync(id);
+            _mapper.Map(dto, book);
 
             _logger.LogInformation($"Check if book will update successfully.");
             await _repository.UpdateAsync(book);

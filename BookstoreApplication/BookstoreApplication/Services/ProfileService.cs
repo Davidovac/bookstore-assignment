@@ -32,8 +32,12 @@ namespace BookstoreApplication.Services
             {
                 throw new NotFoundException("User with provided username does not exist");
             }
+            var roles = await _userManager.GetRolesAsync(user);
+            
 
-            return _mapper.Map<ProfileDto>(user);
+            var profile = _mapper.Map<ProfileDto>(user);
+            profile.Roles = roles;
+            return profile;
         }
     }
 }

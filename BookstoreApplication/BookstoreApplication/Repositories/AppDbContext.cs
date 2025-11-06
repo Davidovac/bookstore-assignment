@@ -1,4 +1,5 @@
 ﻿using BookstoreApplication.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +18,11 @@ namespace BookstoreApplication.Repositories
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<IdentityRole>().HasData(
+                new IdentityRole { Name = "Editor", NormalizedName = "EDITOR" },
+                new IdentityRole { Name = "Librarian", NormalizedName = "LIBRARIAN" }
+                );
 
             //Award and Author link
             modelBuilder.Entity<AwardAuthor>()

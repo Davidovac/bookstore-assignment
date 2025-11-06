@@ -7,8 +7,8 @@ namespace BookstoreApplication.Services
     {
         Task<List<BookDto>?> GetAllAsync(int sort, BookFilterMix filterMix);
         Task<BookDetailsDto?> GetByIdAsync(int id);
-        Task<BookDetailsDto> CreateAndLinkAsync(BookSimpleDto dto);
-        Task<BookDetailsDto> UpdateAsync(int id, BookSimpleDto dto);
+        Task<BookDetailsDto> CreateAndLinkAsync(BookRequestDto dto);
+        Task<BookDetailsDto> UpdateAsync(int id, BookRequestDto dto);
         Task DeleteAsync(int id);
     }
 }

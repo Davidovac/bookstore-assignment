@@ -3,6 +3,7 @@ using System;
 using BookstoreApplication.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BookstoreApplication.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251106130016_AddRolesNAuthorization")]
+    partial class AddRolesNAuthorization
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -555,13 +558,13 @@ namespace BookstoreApplication.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "ac7b16e7-d815-4586-b136-a83fc7a2c812",
+                            Id = "c8d26a1b-4b33-403c-881f-af52fdbc673a",
                             Name = "Editor",
                             NormalizedName = "EDITOR"
                         },
                         new
                         {
-                            Id = "4475c3cf-c8be-49e6-baea-5a9d6dcf0017",
+                            Id = "624ec277-c61d-4a4f-a0de-5642de11f625",
                             Name = "Librarian",
                             NormalizedName = "LIBRARIAN"
                         });

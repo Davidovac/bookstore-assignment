@@ -13,9 +13,10 @@ namespace BookstoreApplication.Settings
 
 
             CreateMap<Book, BookDto>()
-                .ForMember(dest => dest.ExistsFor, opt => opt.MapFrom(src => DateTime.Now.Year - src.PublishedDate.Year));
+                .ForMember(dest => dest.ExistsFor, opt => opt.MapFrom(src => DateTime.UtcNow.Year - src.PublishedDate.Year));
             CreateMap<Book, BookDetailsDto>().ReverseMap();
-            CreateMap<Book, BookSimpleDto>().ReverseMap();
+            CreateMap<Book, BookRequestDto>().ReverseMap()
+                .ForMember(dest => dest.PublishedDate, opt => opt.MapFrom(src => DateTime.SpecifyKind(src.PublishedDate, DateTimeKind.Utc)));
 
 
             CreateMap<Author, AuthorDto>().ReverseMap();

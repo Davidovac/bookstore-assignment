@@ -1,6 +1,8 @@
-﻿namespace BookstoreApplication.DTOs
+﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace BookstoreApplication.DTOs
 {
-    public class BookSimpleDto
+    public class BookRequestDto
     {
         public int Id { get; set; }
         public string Title { get; set; }

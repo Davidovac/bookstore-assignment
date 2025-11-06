@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using BookstoreApplication.Controllers;
+using BookstoreApplication.Data;
 using BookstoreApplication.Models;
 using BookstoreApplication.Repositories;
 using BookstoreApplication.Services;
@@ -124,6 +125,12 @@ builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await SeedData.InitializeAsync(services);
+}
 
 app.UseAuthentication();
 

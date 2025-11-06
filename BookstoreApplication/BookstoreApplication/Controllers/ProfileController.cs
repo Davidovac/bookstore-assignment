@@ -1,4 +1,5 @@
-﻿using BookstoreApplication.Services;
+﻿using System.Security.Claims;
+using BookstoreApplication.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,6 +8,7 @@ namespace BookstoreApplication.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProfileController : ControllerBase
     {
         private readonly IProfileService _profileService;
@@ -14,8 +16,8 @@ namespace BookstoreApplication.Controllers
         {
             _profileService = profileService;
         }
-        [Authorize]
-        [HttpGet("profile")]
+        
+        [HttpGet]
         public async Task<IActionResult> Profile()
         {
             return Ok(await _profileService.GetProfile(User));
