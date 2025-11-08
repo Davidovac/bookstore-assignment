@@ -11,18 +11,20 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Google.Apis.Auth.AspNetCore3;
+using Google.Apis.Drive.v3;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Building Example API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Bookstore API", Version = "v1" });
 
     // Definisanje JWT Bearer autentifikacije
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -37,27 +39,28 @@ builder.Services.AddSwaggerGen(c =>
 
     // Primena Bearer autentifikacije
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
                 {
+                    Reference = new OpenApiReference
                     {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        },
-                        Array.Empty<string>()
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
                     }
-                });
+                },
+                Array.Empty<string>()
+            }
+        });
 });
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
         policy => policy
             .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowAnyHeader());
+            .AllowCredentials());
 });
 
 builder.Services.AddIdentity<User, IdentityRole>()
@@ -77,25 +80,30 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+
+})
+.AddCookie().AddGoogle(options =>
+{
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
 .AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateLifetime = true,
-
-        ValidateIssuer = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-
-        ValidateAudience = true,
+        ValidateIssuer = true, 
+        ValidIssuer = builder.Configuration["Jwt:Issuer"], 
+        ValidateAudience = true, 
         ValidAudience = builder.Configuration["Jwt:Audience"],
-
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-
-        RoleClaimType = ClaimTypes.Role
+        RoleClaimType = ClaimTypes.Role 
     };
 });
+
 
 builder.Services.AddAutoMapper(cfg => {
     cfg.AddProfile<MappingProfile>();
@@ -113,6 +121,7 @@ builder.Services.AddScoped<IPublishersRepository, PublishersRepository>();
 builder.Services.AddScoped<IAuthorsRepository, AuthorsRepository>();
 builder.Services.AddScoped<IBooksRepository, BooksRepository>();
 builder.Services.AddScoped<IAwardsRepository, AwardsRepository>();
+builder.Services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -132,20 +141,22 @@ using (var scope = app.Services.CreateScope())
     await SeedData.InitializeAsync(services);
 }
 
-app.UseAuthentication();
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseRouting();
 
 app.UseCors("AllowReactApp");
 
+app.UseHttpsRedirection();
+
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapControllers();
 
