@@ -1,0 +1,8 @@
+﻿namespace Bookstore.Application.DTOs
+{
+    public class AuthorNameDto
+    {
+        public int Id { get; set; }
+        public string FullName { get; set; }
+    }
+}
