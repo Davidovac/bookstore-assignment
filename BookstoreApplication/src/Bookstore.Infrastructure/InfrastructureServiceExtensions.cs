@@ -21,6 +21,8 @@ public static class InfrastructureServiceExtensions
         services.AddScoped<IBooksRepository, BooksRepository>();
         services.AddScoped<IPublishersRepository, PublishersRepository>();
         services.AddScoped<IAwardsRepository, AwardsRepository>();
+        services.AddScoped<IComicsRepository, ComicsRepository>();
+        services.AddScoped<IExternalComicsService, Services.ExternalComicsService>();
 
         return services;
     }

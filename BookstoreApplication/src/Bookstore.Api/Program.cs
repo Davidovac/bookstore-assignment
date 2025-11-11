@@ -13,6 +13,7 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using Bookstore.Application;
 using Bookstore.Infrastructure;
+using Bookstore.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -115,6 +116,7 @@ builder.Services.AddAutoMapper(cfg => {
 
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddHttpClient<ExternalComicsService>();
 
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 

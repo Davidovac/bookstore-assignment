@@ -2,6 +2,7 @@
 using Bookstore.Domain.Entities.AwardAuthorEntity;
 using Bookstore.Domain.Entities.AwardEntities;
 using Bookstore.Domain.Entities.BookEntities;
+using Bookstore.Domain.Entities.ComicEntities;
 using Bookstore.Domain.Entities.PublisherEntities;
 using Bookstore.Domain.Entities.UserEntities;
 using Microsoft.AspNetCore.Identity;
@@ -19,6 +20,7 @@ namespace Bookstore.Infrastructure.Persistence
         public DbSet<Publisher> Publishers { get; set; }
         public DbSet<Award> Awards { get; set; }
         public DbSet<AwardAuthor> AwardAuthors { get; set; }
+        public DbSet<ComicIssue> ComicIssues { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

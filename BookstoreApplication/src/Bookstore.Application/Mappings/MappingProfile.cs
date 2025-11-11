@@ -2,7 +2,9 @@
 using Bookstore.Application.DTOs;
 using Bookstore.Domain.Entities.AuthorEntities;
 using Bookstore.Domain.Entities.BookEntities;
+using Bookstore.Domain.Entities.ComicEntities;
 using Bookstore.Domain.Entities.UserEntities;
+using Bookstore.Domain.ExternalEntities.ComicEntities;
 
 namespace Bookstore.Application.Mappings
 {
@@ -23,6 +25,15 @@ namespace Bookstore.Application.Mappings
 
             CreateMap<Author, AuthorDto>().ReverseMap();
             CreateMap<Author, AuthorNameDto>();
+
+
+            CreateMap<ComicIssueExt, ComicIssue>()
+                .ForMember(dest => dest.ExternalIssueId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.CoverDate, opt => opt.MapFrom(src => DateTime.SpecifyKind(src.CoverDate, DateTimeKind.Utc)));
+
+            CreateMap<ComicIssueCreateDto, ComicIssue>()
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
         }
     }
 }

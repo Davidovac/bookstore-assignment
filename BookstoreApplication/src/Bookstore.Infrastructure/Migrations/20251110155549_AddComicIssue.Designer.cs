@@ -3,6 +3,7 @@ using System;
 using Bookstore.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bookstore.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251110155549_AddComicIssue")]
+    partial class AddComicIssue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -425,17 +428,14 @@ namespace Bookstore.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("ExternalIssueId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Image")
-                        .HasColumnType("text");
-
-                    b.Property<string>("IssueNumber")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("IssueNumber")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -443,6 +443,9 @@ namespace Bookstore.Infrastructure.Migrations
 
                     b.Property<int>("PagesCount")
                         .HasColumnType("integer");
+
+                    b.Property<string>("PictureUrl")
+                        .HasColumnType("text");
 
                     b.Property<double>("Price")
                         .HasColumnType("double precision");
@@ -600,13 +603,13 @@ namespace Bookstore.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "9bafaa68-c01a-4673-af40-010caac1c0a6",
+                            Id = "0160121d-ce9f-4356-b5da-225a2b87b641",
                             Name = "Editor",
                             NormalizedName = "EDITOR"
                         },
                         new
                         {
-                            Id = "86260be3-a452-4329-9169-67be69606f51",
+                            Id = "befb5eca-ac67-4a53-bd76-394a8a84c757",
                             Name = "Librarian",
                             NormalizedName = "LIBRARIAN"
                         });

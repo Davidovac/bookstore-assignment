@@ -15,6 +15,7 @@ namespace Bookstore.Application
             services.AddScoped<IGoogleAuthService, GoogleAuthService>();
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IPublishersService, PublishersService>();
+            services.AddScoped<IComicsService, ComicsService>();
 
             return services;
         }
