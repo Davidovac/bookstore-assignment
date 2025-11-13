@@ -1,13 +1,14 @@
-﻿using Bookstore.Domain.Entities.PublisherEntities;
+﻿using Bookstore.Application.DTOs;
+using Bookstore.Domain.Entities.PublisherEntities;
 
 namespace Bookstore.Application.Interfaces
 {
     public interface IPublishersService
     {
-        Task<List<Publisher>?> GetAllAsync(int sort);
-        Task<Publisher?> GetByIdAsync(int id);
-        Task<Publisher> AddAsync(Publisher publisher);
-        Task<Publisher> UpdateAsync(int id, Publisher publisher);
+        Task<List<PublisherDto>?> GetAllAsync(int sort);
+        Task<PublisherDto?> GetByIdAsync(int id);
+        Task<PublisherDto> AddAsync(Publisher publisher);
+        Task<PublisherDto> UpdateAsync(int id, Publisher publisher);
         Task DeleteAsync(int id);
     }
 }

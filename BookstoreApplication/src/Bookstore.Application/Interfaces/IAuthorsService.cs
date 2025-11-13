@@ -6,11 +6,11 @@ namespace Bookstore.Application.Interfaces
 {
     public interface IAuthorsService
     {
-        Task<PaginatedList<AuthorDto>?> GetAllAsync(int page);
+        Task<PaginatedList<AuthorDto>?> GetPagedAsync(int page);
         Task<List<AuthorNameDto>?> GetAllNamesAsync();
-        Task<Author?> GetByIdAsync(int id);
-        Task<Author> AddAsync(Author author);
-        Task<Author> UpdateAsync(int id, Author author);
+        Task<AuthorDto?> GetByIdAsync(int id);
+        Task<AuthorDto> AddAsync(Author author);
+        Task<AuthorDto> UpdateAsync(int id, Author author);
         Task DeleteAsync(int id);
     }
 }

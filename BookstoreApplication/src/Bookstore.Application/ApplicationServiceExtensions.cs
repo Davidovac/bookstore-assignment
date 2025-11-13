@@ -8,13 +8,14 @@ namespace Bookstore.Application
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            services.AddScoped<IAuthorsService, AuthorsService>();
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IAwardsService, AwardsService>();
-            services.AddScoped<IBooksService, BooksService>();
-            services.AddScoped<IGoogleAuthService, GoogleAuthService>();
             services.AddScoped<IProfileService, ProfileService>();
+            services.AddScoped<IBooksService, BooksService>();
+            services.AddScoped<IReviewService, ReviewService>();
+            services.AddScoped<IAuthorsService, AuthorsService>();
+            services.AddScoped<IAwardsService, AwardsService>();
             services.AddScoped<IPublishersService, PublishersService>();
+            services.AddScoped<IGoogleAuthService, GoogleAuthService>();
             services.AddScoped<IComicsService, ComicsService>();
 
             return services;

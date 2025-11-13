@@ -7,7 +7,7 @@ namespace Bookstore.Application.Interfaces
     {
         Task<List<BookDto>?> GetAllAsync(int sort, BookFilterMix filterMix);
         Task<BookDetailsDto?> GetByIdAsync(int id);
-        Task<BookDetailsDto> CreateAndLinkAsync(BookRequestDto dto);
+        Task<BookDetailsDto> AddAsync(BookRequestDto dto);
         Task<BookDetailsDto> UpdateAsync(int id, BookRequestDto dto);
         Task DeleteAsync(int id);
     }

@@ -1,34 +1,26 @@
-﻿using Bookstore.Domain.Entities.BookEntities;
+﻿using System.Net;
+using Bookstore.Domain.Entities.BookEntities;
 using Bookstore.Domain.Interfaces;
 using Bookstore.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bookstore.Infrastructure.Repositories
 {
-    public class BooksRepository : IBooksRepository
+    public class BooksRepository : GenericRepository<Book>, IBooksRepository
     {
-        private AppDbContext _context;
-        public BooksRepository(AppDbContext context)
-        {
-            _context = context;
-        }
+        public BooksRepository(AppDbContext context) : base(context) { }
 
-        public async Task<Book?> GetBookAsync(int id)
-        {
-            return await _context.Books.FindAsync(id);
-        }
-
-        public async Task<Book?> GetByIdAsync(int id)
+        /*public async Task<Book?> GetByIdAsync(int id)
         {
             return await _context.Books
                 .Include(b => b.Author)
                 .Include(b => b.Publisher)
                 .FirstOrDefaultAsync(b => b.Id == id);
-        }
+        }*/
 
-        public async Task<List<Book>?> GetAllAsync(int sort, BookFilterMix filterMix)
+        public async Task<List<Book>?> GetPagedAsync(int sort, BookFilterMix filterMix)
         {
-            IQueryable<Book> query = _context.Books
+            IQueryable<Book> query = _dbContext.Books
                 .Include(b => b.Author)
                 .Include(b => b.Publisher);
             query = ApplySorting(query, sort);
@@ -36,25 +28,11 @@ namespace Bookstore.Infrastructure.Repositories
             return await query.ToListAsync();
         }
 
-        public async Task<Book?> AddAsync(Book book)
+        public async Task UpdateAvgRating(int bookId, double newRating)
         {
-            _context.Books.Add(book);
-            await _context.SaveChangesAsync();
-            return book;
-        }
-
-        public async Task<Book> UpdateAsync(Book book)
-        {
-            _context.Books.Update(book);
-            await _context.SaveChangesAsync();
-            return book;
-        }
-
-
-        public async Task DeleteAsync(Book book)
-        {
-            _context.Books.Remove(book);
-            await _context.SaveChangesAsync();
+            await _dbContext.Books
+                .Where(b => b.Id == bookId)
+                .ExecuteUpdateAsync(s => s.SetProperty(b => b.AvgRating, newRating));
         }
 
         private static IQueryable<Book> ApplySorting(IQueryable<Book> query, int sort)

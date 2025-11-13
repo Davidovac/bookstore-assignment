@@ -44,7 +44,7 @@ namespace Bookstore.Api.Controllers
             {
                 return BadRequest(ModelState);
             }
-            return Ok(await _booksService.CreateAndLinkAsync(dto));
+            return Ok(await _booksService.AddAsync(dto));
         }
 
         // PUT api/books/5

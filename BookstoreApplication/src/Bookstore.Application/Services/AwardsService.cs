@@ -1,45 +1,65 @@
-﻿using Bookstore.Application.Exceptions;
+﻿using AutoMapper;
+using Bookstore.Application.DTOs;
+using Bookstore.Application.Exceptions;
 using Bookstore.Application.Interfaces;
 using Bookstore.Domain.Entities.AwardEntities;
+using Bookstore.Domain.Entities.BookEntities;
+using Bookstore.Domain.Entities.UserEntities;
 using Bookstore.Domain.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace Bookstore.Application.Services
 {
     public class AwardsService : IAwardsService
     {
-        private IAwardsRepository _repository;
+        private readonly UserManager<User> _userManager;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public AwardsService(IAwardsRepository repository)
+        public AwardsService(UserManager<User> userManager, IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _repository = repository;
+            _userManager = userManager;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        public async Task<List<Award>?> GetAllAsync()
+        public async Task<List<AwardDto>> GetAllAsync()
         {
-            var awards = await _repository.GetAllAsync();
+            var awards = await _unitOfWork.Awards.GetAllAsync();
             if (awards == null)
             {
                 throw new Exception("No awards found");
             }
-            return awards;
+            return _mapper.Map<List<AwardDto>>(awards) ?? new List<AwardDto>();
         }
 
-        public async Task<Award?> GetByIdAsync(int id)
+        public async Task<AwardDto?> GetByIdAsync(int id)
         {
-            var award = await _repository.GetByIdAsync(id);
+            var award = await _unitOfWork.Awards.GetOneAsync(id);
             if (award == null)
             {
                 throw new NotFoundException($"Award with id: {id} not found");
             }
-            return award;
+            return _mapper.Map<AwardDto>(award);
         }
 
-        public async Task<Award> AddAsync(Award award)
+        public async Task<AwardDto> AddAsync(Award award)
         {
-            return await _repository.AddAsync(award);
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                await _unitOfWork.Awards.AddAsync(award);
+                await _unitOfWork.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
+            return _mapper.Map<AwardDto>(award);
         }
 
-        public async Task<Award> UpdateAsync(int id, Award award)
+        public async Task<AwardDto> UpdateAsync(int id, Award award)
         {
             if (id != award.Id)
             {
@@ -47,13 +67,37 @@ namespace Bookstore.Application.Services
             }
             await GetByIdAsync(id); // Ensure the award exists
 
-            return await _repository.UpdateAsync(award);
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                _unitOfWork.Awards.Update(award);
+                await _unitOfWork.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
+
+            return _mapper.Map<AwardDto>(award);
         }
 
         public async Task DeleteAsync(int id)
         {
-            var award = await GetByIdAsync(id);
-            await _repository.DeleteAsync(award);
+            var award = await _unitOfWork.Awards.GetOneAsync(id);
+            if (award == null) throw new NotFoundException($"Award with id: {id} not found");
+            
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                _unitOfWork.Awards.Delete(award);
+                await _unitOfWork.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ using Bookstore.Application.DTOs;
 using Bookstore.Application.Exceptions;
 using Bookstore.Application.Interfaces;
 using Bookstore.Domain.Entities.BookEntities;
+using Bookstore.Domain.Entities.ReviewEntities;
 using Bookstore.Domain.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -10,17 +11,13 @@ namespace Bookstore.Application.Services
 {
     public class BooksService : IBooksService
     {
-        private readonly IBooksRepository _repository;
-        private readonly IAuthorsService _authorsService;
-        private readonly IPublishersService _publishersService;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ILogger<BooksService> _logger;
 
-        public BooksService(IBooksRepository repository, IAuthorsService authorsService, IPublishersService publishersService, IMapper mapper, ILogger<BooksService> logger)
+        public BooksService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<BooksService> logger)
         {
-            _repository = repository;
-            _authorsService = authorsService;
-            _publishersService = publishersService;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
         }
@@ -28,7 +25,7 @@ namespace Bookstore.Application.Services
         public async Task<List<BookDto>?> GetAllAsync(int sort, BookFilterMix filterMix)
         {
             _logger.LogInformation($"Check if there are any books");
-            var books = await _repository.GetAllAsync(sort, filterMix);
+            var books = await _unitOfWork.Books.GetPagedAsync(sort, filterMix);
             if (books == null)
             {
                 _logger.LogError($"No books found.");
@@ -41,7 +38,7 @@ namespace Bookstore.Application.Services
         public async Task<BookDetailsDto?> GetByIdAsync(int id)
         {
             _logger.LogInformation($"Check if book with id {id} exists.");
-            var book = await _repository.GetByIdAsync(id);
+            var book = await _unitOfWork.Books.GetOneAsync(id);
             if (book == null)
             {
                 _logger.LogError($"Book with id {id} does not exist.");
@@ -51,29 +48,29 @@ namespace Bookstore.Application.Services
             return _mapper.Map<BookDetailsDto>(book);
         }
 
-        public async Task<Book> GetBookAsync(int id)
+        public async Task<BookDetailsDto> AddAsync(BookRequestDto dto)
         {
-            _logger.LogInformation($"Check if book with id {id} exists.");
-            var book = await _repository.GetBookAsync(id);
-            if (book == null)
-            {
-                _logger.LogError($"Book with id {id} does not exist.");
-                throw new NotFoundException($"Book with id: {id} not found");
-            }
-            _logger.LogInformation($"Book with id {id} found.");
-            return book;
-        }
-
-        public async Task<BookDetailsDto> CreateAndLinkAsync(BookRequestDto dto)
-        {
-            var author = await _authorsService.GetByIdAsync(dto.AuthorId);
-            var publisher = await _publishersService.GetByIdAsync(dto.PublisherId);
+            var author = await _unitOfWork.Authors.GetOneAsync(dto.AuthorId);
+            if (author == null) throw new NotFoundException($"Author with id {dto.AuthorId} not found");
+            var publisher = await _unitOfWork.Publishers.GetOneAsync(dto.PublisherId);
+            if (publisher == null) throw new NotFoundException($"Author with id {dto.PublisherId} not found");
 
             Book book = _mapper.Map<Book>(dto);
             book.Publisher = publisher;
             book.Author = author;
             _logger.LogInformation($"Check if book is added.");
-            await _repository.AddAsync(book);
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                await _unitOfWork.Books.AddAsync(book);
+                await _unitOfWork.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
+
             _logger.LogInformation($"Book added.");
             return _mapper.Map<BookDetailsDto>(book);
         }
@@ -91,19 +88,50 @@ namespace Bookstore.Application.Services
             
             _logger.LogInformation($"Book with id {id} exists.");
 
-            Book book = await GetBookAsync(id);
+            var book = await _unitOfWork.Books.GetOneAsync(id);
+            if (book == null)
+            {
+                throw new NotFoundException("Book not found");
+            }
             _mapper.Map(dto, book);
 
             _logger.LogInformation($"Check if book will update successfully.");
-            await _repository.UpdateAsync(book);
+
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                _unitOfWork.Books.Update(book);
+                await _unitOfWork.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
+
             _logger.LogInformation($"Book updated successfully.");
             return _mapper.Map<BookDetailsDto>(book);
         }
 
         public async Task DeleteAsync(int id)
         {
-            Book? book = await GetBookAsync(id);
-            await _repository.DeleteAsync(book);
+            var book = await _unitOfWork.Books.GetOneAsync(id);
+            if (book == null)
+            {
+                throw new NotFoundException("Book not found");
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                _unitOfWork.Books.Delete(book);
+                await _unitOfWork.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
             _logger.LogInformation($"Book with id {id} deleted successfully.");
         }
 

@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Bookstore.Application.Exceptions;
+using Bookstore.Infrastructure.Exceptions;
 
 namespace Bookstore.Api.Middleware
 {
@@ -29,6 +30,8 @@ namespace Bookstore.Api.Middleware
                 BadRequestException => StatusCodes.Status400BadRequest,
                 ForbiddenException => StatusCodes.Status403Forbidden,
                 NotFoundException => StatusCodes.Status404NotFound,
+                RateLimitException => StatusCodes.Status429TooManyRequests,
+                UnauthorizedApiAccessException => StatusCodes.Status401Unauthorized,
                 _ => StatusCodes.Status500InternalServerError
             };
             var response = new { error = exception.Message };

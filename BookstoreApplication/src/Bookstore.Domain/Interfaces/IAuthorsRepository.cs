@@ -1,15 +1,11 @@
 ﻿using Bookstore.Domain.Entities.AuthorEntities;
+using Bookstore.Domain.Entities.BookEntities;
 using Bookstore.Domain.Entities.Common;
 
 namespace Bookstore.Domain.Interfaces
 {
-    public interface IAuthorsRepository
+    public interface IAuthorsRepository : IGenericRepository<Author>
     {
-        Task<Author?> GetByIdAsync(int id);
-        Task<PaginatedList<Author>> GetAllPagedAsync(int page);
-        Task<List<Author>?> GetAllAsync();
-        Task<Author> AddAsync(Author author);
-        Task<Author> UpdateAsync(Author author);
-        Task DeleteAsync(Author author);
+        Task<PaginatedList<Author>> GetPagedAsync(int page);
     }
 }

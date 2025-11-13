@@ -1,13 +1,10 @@
-﻿using Bookstore.Domain.Entities.PublisherEntities;
+﻿using Bookstore.Domain.Entities.BookEntities;
+using Bookstore.Domain.Entities.PublisherEntities;
 
 namespace Bookstore.Domain.Interfaces
 {
-    public interface IPublishersRepository
+    public interface IPublishersRepository : IGenericRepository<Publisher>
     {
-        Task<Publisher?> GetByIdAsync(int id);
-        Task<List<Publisher>?> GetAllAsync(int sort);
-        Task<Publisher> AddAsync(Publisher publisher);
-        Task<Publisher> UpdateAsync(Publisher publisher);
-        Task DeleteAsync(Publisher publisher);
+        Task<List<Publisher>?> GetAllSortedAsync(int sort);
     }
 }

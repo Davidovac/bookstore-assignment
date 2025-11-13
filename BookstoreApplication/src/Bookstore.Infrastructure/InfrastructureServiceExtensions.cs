@@ -17,11 +17,7 @@ public static class InfrastructureServiceExtensions
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         //services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<IAuthorsRepository, AuthorsRepository>();
-        services.AddScoped<IBooksRepository, BooksRepository>();
-        services.AddScoped<IPublishersRepository, PublishersRepository>();
-        services.AddScoped<IAwardsRepository, AwardsRepository>();
-        services.AddScoped<IComicsRepository, ComicsRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IExternalComicsService, Services.ExternalComicsService>();
 
         return services;

@@ -259,6 +259,9 @@ namespace Bookstore.Infrastructure.Migrations
                     b.Property<int>("AuthorId")
                         .HasColumnType("integer");
 
+                    b.Property<double>("AvgRating")
+                        .HasColumnType("double precision");
+
                     b.Property<string>("ISBN")
                         .IsRequired()
                         .HasColumnType("text");
@@ -289,6 +292,7 @@ namespace Bookstore.Infrastructure.Migrations
                         {
                             Id = 1,
                             AuthorId = 1,
+                            AvgRating = 0.0,
                             ISBN = "1111111111111",
                             PageCount = 432,
                             PublishedDate = new DateTime(1813, 1, 28, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -299,6 +303,7 @@ namespace Bookstore.Infrastructure.Migrations
                         {
                             Id = 2,
                             AuthorId = 1,
+                            AvgRating = 0.0,
                             ISBN = "1111111111112",
                             PageCount = 384,
                             PublishedDate = new DateTime(1815, 12, 23, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -309,6 +314,7 @@ namespace Bookstore.Infrastructure.Migrations
                         {
                             Id = 3,
                             AuthorId = 2,
+                            AvgRating = 0.0,
                             ISBN = "2222222222221",
                             PageCount = 366,
                             PublishedDate = new DateTime(1884, 12, 10, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -319,6 +325,7 @@ namespace Bookstore.Infrastructure.Migrations
                         {
                             Id = 4,
                             AuthorId = 2,
+                            AvgRating = 0.0,
                             ISBN = "2222222222222",
                             PageCount = 274,
                             PublishedDate = new DateTime(1876, 6, 1, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -329,6 +336,7 @@ namespace Bookstore.Infrastructure.Migrations
                         {
                             Id = 5,
                             AuthorId = 3,
+                            AvgRating = 0.0,
                             ISBN = "3333333333331",
                             PageCount = 296,
                             PublishedDate = new DateTime(1925, 5, 14, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -339,6 +347,7 @@ namespace Bookstore.Infrastructure.Migrations
                         {
                             Id = 6,
                             AuthorId = 3,
+                            AvgRating = 0.0,
                             ISBN = "3333333333332",
                             PageCount = 320,
                             PublishedDate = new DateTime(1927, 5, 5, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -349,6 +358,7 @@ namespace Bookstore.Infrastructure.Migrations
                         {
                             Id = 7,
                             AuthorId = 4,
+                            AvgRating = 0.0,
                             ISBN = "4444444444441",
                             PageCount = 127,
                             PublishedDate = new DateTime(1952, 9, 1, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -359,6 +369,7 @@ namespace Bookstore.Infrastructure.Migrations
                         {
                             Id = 8,
                             AuthorId = 4,
+                            AvgRating = 0.0,
                             ISBN = "4444444444442",
                             PageCount = 355,
                             PublishedDate = new DateTime(1929, 9, 27, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -369,6 +380,7 @@ namespace Bookstore.Infrastructure.Migrations
                         {
                             Id = 9,
                             AuthorId = 5,
+                            AvgRating = 0.0,
                             ISBN = "5555555555551",
                             PageCount = 256,
                             PublishedDate = new DateTime(1934, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -379,6 +391,7 @@ namespace Bookstore.Infrastructure.Migrations
                         {
                             Id = 10,
                             AuthorId = 5,
+                            AvgRating = 0.0,
                             ISBN = "5555555555552",
                             PageCount = 272,
                             PublishedDate = new DateTime(1939, 11, 6, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -389,6 +402,7 @@ namespace Bookstore.Infrastructure.Migrations
                         {
                             Id = 11,
                             AuthorId = 1,
+                            AvgRating = 0.0,
                             ISBN = "1111111111113",
                             PageCount = 248,
                             PublishedDate = new DateTime(1817, 12, 20, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -399,6 +413,7 @@ namespace Bookstore.Infrastructure.Migrations
                         {
                             Id = 12,
                             AuthorId = 2,
+                            AvgRating = 0.0,
                             ISBN = "6666666666661",
                             PageCount = 232,
                             PublishedDate = new DateTime(1903, 4, 1, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -500,10 +515,85 @@ namespace Bookstore.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Bookstore.Domain.Entities.ReviewEntities.Review", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Reviews");
+                });
+
+            modelBuilder.Entity("Bookstore.Domain.Entities.UserEntities.Role", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("e1dd44af-eaf2-47d3-a744-b48cd26896ec"),
+                            Name = "Editor",
+                            NormalizedName = "EDITOR"
+                        },
+                        new
+                        {
+                            Id = new Guid("cba69b6b-a75a-4c15-9e34-e5b4de1cf140"),
+                            Name = "Librarian",
+                            NormalizedName = "LIBRARIAN"
+                        });
+                });
+
             modelBuilder.Entity("Bookstore.Domain.Entities.UserEntities.User", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
@@ -572,47 +662,7 @@ namespace Bookstore.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex");
-
-                    b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "9bafaa68-c01a-4673-af40-010caac1c0a6",
-                            Name = "Editor",
-                            NormalizedName = "EDITOR"
-                        },
-                        new
-                        {
-                            Id = "86260be3-a452-4329-9169-67be69606f51",
-                            Name = "Librarian",
-                            NormalizedName = "LIBRARIAN"
-                        });
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -626,9 +676,8 @@ namespace Bookstore.Infrastructure.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("text");
 
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -637,7 +686,7 @@ namespace Bookstore.Infrastructure.Migrations
                     b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -651,9 +700,8 @@ namespace Bookstore.Infrastructure.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("text");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -662,7 +710,7 @@ namespace Bookstore.Infrastructure.Migrations
                     b.ToTable("AspNetUserClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("text");
@@ -673,9 +721,8 @@ namespace Bookstore.Infrastructure.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("text");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -684,13 +731,13 @@ namespace Bookstore.Infrastructure.Migrations
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("RoleId")
-                        .HasColumnType("text");
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -699,10 +746,10 @@ namespace Bookstore.Infrastructure.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("text");
@@ -756,16 +803,35 @@ namespace Bookstore.Infrastructure.Migrations
                     b.Navigation("Publisher");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("Bookstore.Domain.Entities.ReviewEntities.Review", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Bookstore.Domain.Entities.BookEntities.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Bookstore.Domain.Entities.UserEntities.User", "User")
+                        .WithMany("Reviews")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
+                {
+                    b.HasOne("Bookstore.Domain.Entities.UserEntities.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
                     b.HasOne("Bookstore.Domain.Entities.UserEntities.User", null)
                         .WithMany()
@@ -774,7 +840,7 @@ namespace Bookstore.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.HasOne("Bookstore.Domain.Entities.UserEntities.User", null)
                         .WithMany()
@@ -783,9 +849,9 @@ namespace Bookstore.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Bookstore.Domain.Entities.UserEntities.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -798,7 +864,7 @@ namespace Bookstore.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.HasOne("Bookstore.Domain.Entities.UserEntities.User", null)
                         .WithMany()
@@ -820,6 +886,11 @@ namespace Bookstore.Infrastructure.Migrations
             modelBuilder.Entity("Bookstore.Domain.Entities.PublisherEntities.Publisher", b =>
                 {
                     b.Navigation("Books");
+                });
+
+            modelBuilder.Entity("Bookstore.Domain.Entities.UserEntities.User", b =>
+                {
+                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }

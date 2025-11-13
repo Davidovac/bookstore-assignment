@@ -19,7 +19,7 @@ namespace Bookstore.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] int page = 1)
         {
-            return Ok(await _authorsService.GetAllAsync(page));
+            return Ok(await _authorsService.GetPagedAsync(page));
         }
 
         [HttpGet]

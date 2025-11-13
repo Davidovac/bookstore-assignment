@@ -10,8 +10,11 @@ using Bookstore.Application.Exceptions;
 using Bookstore.Application.Interfaces;
 using Bookstore.Domain.Entities.ComicEntities;
 using Bookstore.Domain.Entities.Common;
+using Bookstore.Domain.Entities.ReviewEntities;
+using Bookstore.Domain.Entities.UserEntities;
 using Bookstore.Domain.ExternalEntities.ComicEntities;
 using Bookstore.Domain.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
@@ -20,16 +23,18 @@ namespace Bookstore.Application.Services
     public class ComicsService : IComicsService
     {
         private readonly IExternalComicsService _externalComicsService;
-        private readonly IComicsRepository _comicRepository;
+        private readonly UserManager<User> _userManager;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
 
-        public ComicsService(IExternalComicsService externalComicsService, IComicsRepository comicRepository, IMapper mapper, IConfiguration configuration)
+        public ComicsService(UserManager<User> userManager, IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration, IExternalComicsService externalComicsService)
         {
-            _externalComicsService = externalComicsService;
-            _comicRepository = comicRepository;
+            _userManager = userManager;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
             _configuration = configuration;
+            _externalComicsService = externalComicsService;
         }
 
         public async Task<List<ComicVolumeResponseDto>> GetAllVolumesAsync(string volumeName)
@@ -157,7 +162,18 @@ namespace Bookstore.Application.Services
 
             try
             {
-                await _comicRepository.AddComicIssueAsync(comicIssue);
+                await _unitOfWork.BeginTransactionAsync();
+                try
+                {
+                    await _unitOfWork.Comics.AddComicIssueAsync(comicIssue);
+                    await _unitOfWork.CommitAsync();
+                }
+                catch (Exception ex)
+                {
+                    await _unitOfWork.RollbackAsync();
+                    throw;
+                }
+                
             }
             catch(Exception ex)
             {

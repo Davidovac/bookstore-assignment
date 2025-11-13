@@ -1,60 +1,107 @@
-﻿using Bookstore.Application.Exceptions;
+﻿using AutoMapper;
+using Bookstore.Application.DTOs;
+using Bookstore.Application.Exceptions;
 using Bookstore.Application.Interfaces;
 using Bookstore.Domain.Entities.PublisherEntities;
+using Bookstore.Domain.Entities.ReviewEntities;
+using Bookstore.Domain.Entities.UserEntities;
 using Bookstore.Domain.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace Bookstore.Application.Services
 {
     public class PublishersService : IPublishersService
     {
-        private IPublishersRepository _repository;
+        private readonly UserManager<User> _userManager;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public PublishersService(IPublishersRepository repository)
+        public PublishersService(UserManager<User> userManager, IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _repository = repository;
+            _userManager = userManager;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        public async Task<List<Publisher>?> GetAllAsync(int sort)
+        public async Task<List<PublisherDto>> GetAllAsync(int sort)
         {
-            var publishers = await _repository.GetAllAsync(sort);
+            var publishers = await _unitOfWork.Publishers.GetAllSortedAsync(sort);
             if (publishers == null)
             {
                 throw new Exception("No publishers found");
             }
-            return publishers;
+            return _mapper.Map<List<PublisherDto>>(publishers);
         }
 
-        public async Task<Publisher?> GetByIdAsync(int id)
+        public async Task<PublisherDto?> GetByIdAsync(int id)
         {
-            var publisher = await _repository.GetByIdAsync(id);
+            var publisher = await _unitOfWork.Publishers.GetOneAsync(id);
             if (publisher == null)
             {
                 throw new NotFoundException($"Publisher with id: {id} not found");
             }
-            return publisher;
+            return _mapper.Map<PublisherDto>(publisher);
         }
 
-        public async Task<Publisher> AddAsync(Publisher publisher)
+        public async Task<PublisherDto> AddAsync(Publisher publisher)
         {
-            return await _repository.AddAsync(publisher);
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                await _unitOfWork.Publishers.AddAsync(publisher);
+                await _unitOfWork.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
+            return _mapper.Map<PublisherDto>(publisher);
         }
 
-        public async Task<Publisher> UpdateAsync(int id, Publisher publisher)
+        public async Task<PublisherDto> UpdateAsync(int id, Publisher publisher)
         {
             if (id != publisher.Id)
             {
                 throw new BadRequestException("Identifier value is invalid.");
             }
 
-            await GetByIdAsync(id); // Ensure the publisher exists
+            await GetByIdAsync(id);
 
-            return await _repository.UpdateAsync(publisher);
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                _unitOfWork.Publishers.Update(publisher);
+                await _unitOfWork.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
+
+            return _mapper.Map<PublisherDto>(publisher);
         }
 
         public async Task DeleteAsync(int id)
         {
-            var publisher = await GetByIdAsync(id);
-            await _repository.DeleteAsync(publisher);
+            var publisher = await _unitOfWork.Publishers.GetOneAsync(id);
+            if (publisher == null)
+            {
+                throw new NotFoundException($"Publisher with id: {id} not found");
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                _unitOfWork.Publishers.Delete(publisher);
+                await _unitOfWork.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackAsync();
+                throw;
+            }
         }
 
 

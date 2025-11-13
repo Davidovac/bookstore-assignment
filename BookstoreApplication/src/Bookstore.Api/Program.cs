@@ -68,7 +68,7 @@ builder.Services.AddCors(options =>
             .AllowCredentials());
 });
 
-builder.Services.AddIdentity<User, IdentityRole>()
+builder.Services.AddIdentity<User, Role>()
   .AddEntityFrameworkStores<AppDbContext>()
   .AddDefaultTokenProviders();
 

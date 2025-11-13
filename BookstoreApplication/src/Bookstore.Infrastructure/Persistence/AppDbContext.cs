@@ -4,6 +4,7 @@ using Bookstore.Domain.Entities.AwardEntities;
 using Bookstore.Domain.Entities.BookEntities;
 using Bookstore.Domain.Entities.ComicEntities;
 using Bookstore.Domain.Entities.PublisherEntities;
+using Bookstore.Domain.Entities.ReviewEntities;
 using Bookstore.Domain.Entities.UserEntities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -11,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Bookstore.Infrastructure.Persistence
 {
-    public class AppDbContext : IdentityDbContext<User>
+    public class AppDbContext : IdentityDbContext<User, Role, Guid>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -21,14 +22,15 @@ namespace Bookstore.Infrastructure.Persistence
         public DbSet<Award> Awards { get; set; }
         public DbSet<AwardAuthor> AwardAuthors { get; set; }
         public DbSet<ComicIssue> ComicIssues { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<IdentityRole>().HasData(
-                new IdentityRole { Name = "Editor", NormalizedName = "EDITOR" },
-                new IdentityRole { Name = "Librarian", NormalizedName = "LIBRARIAN" }
+            modelBuilder.Entity<Role>().HasData(
+                new Role { Id = Guid.NewGuid(), Name = "Editor", NormalizedName = "EDITOR" },
+                new Role { Id = Guid.NewGuid(), Name = "Librarian", NormalizedName = "LIBRARIAN" }
                 );
 
             //Award and Author link
@@ -76,6 +78,14 @@ namespace Bookstore.Infrastructure.Persistence
                 .WithOne(b => b.Publisher)
                 .HasForeignKey(b => b.PublisherId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Review>(entity =>
+            {
+                entity.HasOne(r => r.User)
+                      .WithMany(u => u.Reviews)
+                      .HasForeignKey(r => r.UserId)
+                      .IsRequired();
+            });
 
             modelBuilder.Entity<Author>().HasData(
         new Author { Id = 1, FullName = "Jane Austen", Biography = "English novelist", DateOfBirth = DateTime.SpecifyKind(new DateTime(1775, 12, 16), DateTimeKind.Utc) },

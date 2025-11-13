@@ -8,7 +8,7 @@ namespace Bookstore.Infrastructure.Persistence
     {
         public static async Task InitializeAsync(IServiceProvider serviceProvider)
         {
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<Role>>();
             var userManager = serviceProvider.GetRequiredService<UserManager<User>>();
 
             var editor1 = await userManager.FindByNameAsync("mirko");
