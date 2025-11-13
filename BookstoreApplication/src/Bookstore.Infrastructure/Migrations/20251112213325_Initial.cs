@@ -63,7 +63,7 @@ namespace Bookstore.Infrastructure.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     FullName = table.Column<string>(type: "text", nullable: false),
                     Biography = table.Column<string>(type: "text", nullable: false),
-                    Birthday = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    DateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -324,7 +324,7 @@ namespace Bookstore.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Authors",
-                columns: new[] { "Id", "Biography", "Birthday", "FullName" },
+                columns: new[] { "Id", "Biography", "DateOfBirth", "FullName" },
                 values: new object[,]
                 {
                     { 1, "English novelist", new DateTime(1775, 12, 16, 0, 0, 0, 0, DateTimeKind.Utc), "Jane Austen" },

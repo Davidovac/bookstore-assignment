@@ -3,6 +3,7 @@ using System;
 using Bookstore.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bookstore.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251113200453_AddIndexForBookNAuthor")]
+    partial class AddIndexForBookNAuthor
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -290,8 +293,6 @@ namespace Bookstore.Infrastructure.Migrations
                     b.HasIndex("PublishedDate");
 
                     b.HasIndex("PublisherId");
-
-                    b.HasIndex("Title");
 
                     b.ToTable("Books");
 
@@ -585,13 +586,13 @@ namespace Bookstore.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("381d59f9-b364-4da2-bf72-bf2eacdee1f4"),
+                            Id = new Guid("26382cdc-00e2-4f59-b92f-fc4762a4b697"),
                             Name = "Editor",
                             NormalizedName = "EDITOR"
                         },
                         new
                         {
-                            Id = new Guid("b8c35fac-a3f9-4db3-b929-cd0f3b8070df"),
+                            Id = new Guid("12f105c5-af2e-4b2d-a86a-790986368c33"),
                             Name = "Librarian",
                             NormalizedName = "LIBRARIAN"
                         });

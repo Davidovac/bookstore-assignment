@@ -44,7 +44,7 @@ namespace Bookstore.Application.Services
             var ratingsList = allReviews.Select(r => r.Rating).ToList();
             ratingsList.Add(review.Rating);
 
-            double newAvgRating = ratingsList.Average() / ratingsList.Count;
+            double newAvgRating = ratingsList.Average();
 
             await _unitOfWork.BeginTransactionAsync();
             try

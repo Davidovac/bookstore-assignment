@@ -10,14 +10,6 @@ namespace Bookstore.Infrastructure.Repositories
     {
         public BooksRepository(AppDbContext context) : base(context) { }
 
-        /*public async Task<Book?> GetByIdAsync(int id)
-        {
-            return await _context.Books
-                .Include(b => b.Author)
-                .Include(b => b.Publisher)
-                .FirstOrDefaultAsync(b => b.Id == id);
-        }*/
-
         public async Task<List<Book>?> GetPagedAsync(int sort, BookFilterMix filterMix)
         {
             IQueryable<Book> query = _dbContext.Books
@@ -25,6 +17,7 @@ namespace Bookstore.Infrastructure.Repositories
                 .Include(b => b.Publisher);
             query = ApplySorting(query, sort);
             query = ApplyFilters(query, filterMix);
+            query = query.Take(40);
             return await query.ToListAsync();
         }
 

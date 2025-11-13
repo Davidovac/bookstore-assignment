@@ -31,7 +31,23 @@ namespace Bookstore.Infrastructure.Persistence
             modelBuilder.Entity<Role>().HasData(
                 new Role { Id = Guid.NewGuid(), Name = "Editor", NormalizedName = "EDITOR" },
                 new Role { Id = Guid.NewGuid(), Name = "Librarian", NormalizedName = "LIBRARIAN" }
-                );
+            );
+
+            modelBuilder.Entity<Book>()
+            .HasIndex(b => b.Title);
+
+            modelBuilder.Entity<Book>()
+            .HasIndex(b => b.PublishedDate);
+
+            modelBuilder.Entity<Book>()
+            .HasIndex(b => b.AuthorId);
+
+            modelBuilder.Entity<Author>()
+            .HasIndex(a => a.FullName);
+
+            modelBuilder.Entity<Author>()
+            .HasIndex(a => a.DateOfBirth);
+
 
             //Award and Author link
             modelBuilder.Entity<AwardAuthor>()
@@ -56,7 +72,7 @@ namespace Bookstore.Infrastructure.Persistence
             modelBuilder.Entity<Author>(entity =>
             {
                 entity.Property(a => a.DateOfBirth)
-                    .HasColumnName("Birthday");
+                    .HasColumnName("DateOfBirth");
             });
 
 

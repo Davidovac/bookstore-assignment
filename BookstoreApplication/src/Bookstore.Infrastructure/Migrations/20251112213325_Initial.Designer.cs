@@ -39,7 +39,7 @@ namespace Bookstore.Infrastructure.Migrations
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("Birthday");
+                        .HasColumnName("DateOfBirth");
 
                     b.Property<string>("FullName")
                         .IsRequired()
