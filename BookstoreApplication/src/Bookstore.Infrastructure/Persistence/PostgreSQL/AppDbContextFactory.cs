@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-namespace Bookstore.Infrastructure.Persistence
+namespace Bookstore.Infrastructure.Persistence.PostgreSQL
 {
     public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {

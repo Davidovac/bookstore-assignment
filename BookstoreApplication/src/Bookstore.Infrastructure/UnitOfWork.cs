@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Bookstore.Domain.Interfaces;
-using Bookstore.Infrastructure.Persistence;
+using Bookstore.Infrastructure.Persistence.PostgreSQL;
 using Bookstore.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore.Storage;
 

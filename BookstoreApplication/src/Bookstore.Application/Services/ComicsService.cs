@@ -27,14 +27,16 @@ namespace Bookstore.Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
+        private readonly IComicNoSqlService _comicNoSqlService;
 
-        public ComicsService(UserManager<User> userManager, IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration, IExternalComicsService externalComicsService)
+        public ComicsService(UserManager<User> userManager, IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration, IExternalComicsService externalComicsService, IComicNoSqlService comicNoSqlService)
         {
             _userManager = userManager;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _configuration = configuration;
             _externalComicsService = externalComicsService;
+            _comicNoSqlService = comicNoSqlService;
         }
 
         public async Task<List<ComicVolumeResponseDto>> GetAllVolumesAsync(string volumeName)
@@ -162,18 +164,7 @@ namespace Bookstore.Application.Services
 
             try
             {
-                await _unitOfWork.BeginTransactionAsync();
-                try
-                {
-                    await _unitOfWork.Comics.AddComicIssueAsync(comicIssue);
-                    await _unitOfWork.CommitAsync();
-                }
-                catch (Exception ex)
-                {
-                    await _unitOfWork.RollbackAsync();
-                    throw;
-                }
-                
+                await _comicNoSqlService.AddIssueAsync(comicIssue);
             }
             catch(Exception ex)
             {

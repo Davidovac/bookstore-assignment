@@ -1,6 +1,6 @@
 ﻿using Bookstore.Domain.Interfaces;
-using Bookstore.Infrastructure.Persistence;
-using Bookstore.Infrastructure.Repositories;
+using Bookstore.Infrastructure.Persistence.MongoDB;
+using Bookstore.Infrastructure.Persistence.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,11 +15,14 @@ public static class InfrastructureServiceExtensions
     {
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
-
-        //services.AddScoped<IUnitOfWork, UnitOfWork>();
+        //
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
         services.AddScoped<IExternalComicsService, Services.ExternalComicsService>();
 
+        services.AddScoped<IComicNoSqlRepository, ComicNoSqlRepository>();
+        services.AddScoped<IComicNoSqlService, ComicNoSqlService>();
+        //
         return services;
     }
 }

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Bookstore.Infrastructure.Persistence
+namespace Bookstore.Infrastructure.Persistence.PostgreSQL
 {
     public class AppDbContext : IdentityDbContext<User, Role, Guid>
     {

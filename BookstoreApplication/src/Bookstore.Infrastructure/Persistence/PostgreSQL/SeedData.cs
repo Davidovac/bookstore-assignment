@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Bookstore.Infrastructure.Persistence
+namespace Bookstore.Infrastructure.Persistence.PostgreSQL
 {
     public static class SeedData
     {

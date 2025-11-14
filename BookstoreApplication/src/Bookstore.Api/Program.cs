@@ -3,7 +3,6 @@ using System.Text;
 using Bookstore.Api.Middleware;
 using Bookstore.Application.Mappings;
 using Bookstore.Domain.Entities.UserEntities;
-using Bookstore.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -14,6 +13,8 @@ using Serilog;
 using Bookstore.Application;
 using Bookstore.Infrastructure;
 using Bookstore.Infrastructure.Services;
+using Bookstore.Infrastructure.Persistence.MongoDB;
+using Bookstore.Infrastructure.Persistence.PostgreSQL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -116,6 +117,8 @@ builder.Services.AddAutoMapper(cfg => {
 
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddMongo(builder.Configuration);
+
 builder.Services.AddHttpClient<ExternalComicsService>();
 
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();

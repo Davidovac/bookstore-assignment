@@ -2,7 +2,7 @@
 using Bookstore.Domain.Entities.AuthorEntities;
 using Bookstore.Domain.Entities.Common;
 using Bookstore.Domain.Interfaces;
-using Bookstore.Infrastructure.Persistence;
+using Bookstore.Infrastructure.Persistence.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bookstore.Infrastructure.Repositories

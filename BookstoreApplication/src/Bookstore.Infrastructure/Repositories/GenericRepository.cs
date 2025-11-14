@@ -1,5 +1,5 @@
 ﻿using Bookstore.Domain.Interfaces;
-using Bookstore.Infrastructure.Persistence;
+using Bookstore.Infrastructure.Persistence.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bookstore.Infrastructure.Repositories;

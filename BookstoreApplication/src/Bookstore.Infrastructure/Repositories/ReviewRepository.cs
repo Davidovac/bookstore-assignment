@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Bookstore.Domain.Entities.ReviewEntities;
 using Bookstore.Domain.Interfaces;
-using Bookstore.Infrastructure.Persistence;
+using Bookstore.Infrastructure.Persistence.PostgreSQL;
 
 namespace Bookstore.Infrastructure.Repositories
 {
